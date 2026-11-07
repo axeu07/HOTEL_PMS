@@ -1,0 +1,177 @@
+/* Immersive landing hero. Scoped under .h3d*; nothing here reaches the CMS screens. */
+
+.h3d {
+  --h3d-cream: #f6efdd;
+  --h3d-cream-2: rgba(246, 239, 221, 0.78);
+  --h3d-gold: #e3bb72;
+  --h3d-gold-hover: #f0cf90;
+  --h3d-night: #0d1517;
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 620px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--h3d-night);
+  color: var(--h3d-cream);
+}
+
+/* ---------- 3D stage ---------- */
+
+.h3d-stage { position: absolute; inset: -1px; z-index: 0; will-change: transform; }
+.h3d-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+.h3d-canvas { position: absolute; inset: 0; opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }
+.h3d-canvas.is-ready { opacity: 1; }
+.h3d-canvas canvas { display: block; }
+
+.h3d-scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(120% 100% at 50% 50%, transparent 58%, rgba(7, 9, 16, 0.4) 100%),
+    linear-gradient(to top, rgba(6, 12, 15, 0.9) 0%, rgba(6, 12, 15, 0.62) 16%, transparent 34%),
+    linear-gradient(to bottom, rgba(10, 9, 26, 0.5) 0%, rgba(10, 9, 26, 0.3) 24%, transparent 38%);
+}
+
+/* ---------- Floating navigation (stays over the whole page) ---------- */
+
+.h3d-nav {
+  position: fixed; z-index: 30; top: 18px; left: 50%; transform: translateX(-50%);
+  width: min(960px, calc(100vw - 32px));
+  display: flex; align-items: center; gap: 20px;
+  padding: 8px 8px 8px 20px;
+  border-radius: 999px;
+  color: #f6efdd;
+  background: rgba(14, 26, 25, 0.5);
+  border: 1px solid rgba(246, 239, 221, 0.17);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 16px 44px -22px rgba(0, 0, 0, 0.75);
+  transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.4s ease, top 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.h3d-nav.is-condensed { width: min(800px, calc(100vw - 32px)); top: 12px; background: rgba(14, 30, 27, 0.86); }
+
+.h3d-brand { display: flex; align-items: center; gap: 8px; color: #e3bb72; text-decoration: none; font-family: var(--serif); font-size: 21px; }
+.h3d-brand span { color: #f6efdd; }
+
+.h3d-nav-links { display: flex; gap: 2px; margin: 0 auto; }
+.h3d-nav-links a {
+  position: relative; padding: 7px 13px; font-size: 14px; font-weight: 500; letter-spacing: 0.01em;
+  color: rgba(246, 239, 221, 0.86); text-decoration: none; transition: color 0.25s ease;
+}
+.h3d-nav-links a::after {
+  content: ''; position: absolute; left: 13px; right: 13px; bottom: 3px; height: 1px;
+  background: #e3bb72; transform: scaleX(0); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.h3d-nav-links a:hover { color: #fff; }
+.h3d-nav-links a:hover::after { transform: scaleX(1); }
+
+.h3d-nav-cta {
+  flex: none; padding: 9px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;
+  color: #1a1407; background: #e3bb72; text-decoration: none; transition: background 0.25s ease, transform 0.25s ease;
+}
+.h3d-nav-cta:hover { background: #f0cf90; transform: translateY(-1px); }
+
+.h3d-nav a:focus-visible, .h3d-actions a:focus-visible, .h3d-disclosure a:focus-visible {
+  outline: 2px solid #f0cf90; outline-offset: 3px; border-radius: 999px;
+}
+
+/* ---------- Copy: headline in the sky, supporting line and actions below the water ---------- */
+
+.h3d-copy {
+  position: absolute; z-index: 2; inset: 0;
+  display: flex; flex-direction: column; justify-content: space-between;
+  /* The bottom padding clears the booking bar, which overlaps the hero's edge. */
+  padding: 88px clamp(20px, 3.4vw, 56px) 72px;
+  pointer-events: none;
+}
+.h3d-copy a { pointer-events: auto; }
+
+.h3d-title-block { text-align: center; }
+.h3d-eyebrow {
+  margin: 0 0 2px; font-size: 13px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #f4d49a;
+  text-shadow: 0 1px 12px rgba(5, 8, 16, 0.6);
+}
+.h3d-title {
+  margin: 0; color: var(--h3d-cream); font-family: var(--serif); font-weight: 300;
+  font-size: clamp(50px, min(9vw, 18vh), 184px); line-height: 1; letter-spacing: -0.035em;
+  will-change: transform;
+}
+.h3d-title em { font-style: italic; color: #f7dfb0; }
+.h3d-line { display: inline-block; overflow: hidden; padding: 0.04em 0.06em 0.2em; margin-bottom: -0.16em; vertical-align: top; }
+.h3d-line > span { display: inline-block; will-change: transform; }
+
+.h3d-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px 40px; }
+.h3d-sub { margin: 0; max-width: 40ch; font-size: clamp(16px, 1.3vw, 20px); line-height: 1.42; color: var(--h3d-cream); text-shadow: 0 1px 14px rgba(4, 8, 10, 0.75); }
+
+.h3d-foot-end { display: grid; justify-items: end; gap: 14px; flex: none; }
+.h3d-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.h3d-btn {
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 50px; padding: 12px 24px; border-radius: 999px;
+  font-size: 15.5px; font-weight: 600; text-decoration: none; color: var(--h3d-cream);
+  border: 1px solid rgba(246, 239, 221, 0.46);
+  background: rgba(12, 22, 24, 0.34);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+}
+.h3d-btn:hover { background: rgba(246, 239, 221, 0.95); border-color: transparent; color: #17201c; transform: translateY(-2px); }
+.h3d-btn svg { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.h3d-btn-primary { color: #1a1407; background: var(--h3d-gold); border-color: var(--h3d-gold); }
+.h3d-btn-primary::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-18deg); transition: left 0.7s ease;
+}
+.h3d-btn-primary:hover { background: var(--h3d-gold-hover); color: #1a1407; box-shadow: 0 14px 34px -14px rgba(227, 187, 114, 0.85); }
+.h3d-btn-primary:hover::before { left: 125%; }
+.h3d-btn-primary:hover svg { transform: translateX(4px); }
+
+/* ---------- Chapter marker and disclosure ---------- */
+
+.h3d-chapter { display: flex; align-items: baseline; gap: 12px; text-shadow: 0 1px 10px rgba(5, 8, 12, 0.7); }
+.h3d-chapter-count { font-size: 13px; letter-spacing: 0.08em; color: var(--h3d-cream-2); }
+.h3d-chapter-count b { font-family: var(--serif); font-size: 24px; font-weight: 400; letter-spacing: 0; color: var(--h3d-cream); }
+.h3d-chapter-ticks { display: flex; gap: 4px; align-self: center; }
+.h3d-chapter-ticks i { display: block; width: 16px; height: 2px; background: rgba(246, 239, 221, 0.36); }
+.h3d-chapter-ticks i.on { background: var(--h3d-gold); }
+.h3d-chapter-name { font-family: var(--serif); font-style: italic; font-size: 17px; color: var(--h3d-cream); }
+
+.h3d-disclosure { margin: 8px 0 0; font-size: 12.5px; color: rgba(246, 239, 221, 0.78); text-shadow: 0 1px 10px rgba(4, 8, 10, 0.8); }
+.h3d-disclosure a { color: var(--h3d-gold); font-weight: 600; }
+
+/* ---------- Smaller screens ---------- */
+
+@media (max-width: 960px) {
+  .h3d-nav-links { display: none; }
+  .h3d-nav { justify-content: space-between; }
+  .h3d-line { display: block; }
+  .h3d-title { font-size: clamp(50px, 14.6vw, 124px); }
+  /* The booking bar no longer overlaps the hero at this width. */
+  .h3d-copy { padding-top: 84px; padding-bottom: 28px; }
+  .h3d-scrim {
+    background:
+      linear-gradient(to top, rgba(6, 12, 15, 0.95) 0%, rgba(6, 12, 15, 0.8) 30%, transparent 46%),
+      linear-gradient(to bottom, rgba(10, 9, 26, 0.5) 0%, rgba(10, 9, 26, 0.3) 22%, transparent 34%);
+  }
+  .h3d-foot { flex-direction: column; align-items: stretch; }
+  .h3d-foot-end { justify-items: stretch; }
+  .h3d-chapter { display: none; }
+}
+
+@media (max-width: 560px) {
+  .h3d { min-height: 680px; }
+  .h3d-actions .h3d-btn { flex: 1 1 100%; }
+  .h3d-copy { padding-bottom: 20px; }
+  .h3d-disclosure { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h3d-canvas { transition: none; }
+  .h3d-btn, .h3d-btn svg, .h3d-nav, .h3d-nav-cta, .h3d-nav-links a::after { transition: none; }
+}
+
+@media print {
+  .h3d, .h3d-nav { display: none; }
+}

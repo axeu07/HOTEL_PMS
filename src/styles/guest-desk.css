@@ -1,0 +1,108 @@
+/* Guest desk: walk-in lookup, reception QR, QR registrations, the public registration page, and the dark-mode logo. */
+
+/* ---------- Sidebar logo in dark mode ----------
+ * The same image, same box, drawn white: brightness(0) flattens every colour to black and invert(1) turns
+ * that white, while the transparent parts stay transparent. Nothing is swapped, resized or redrawn. */
+:root[data-theme='dark'] .brand-logo { filter: brightness(0) invert(1); }
+
+@media screen {
+  /* ---------- Walk-in lookup card ---------- */
+  :root[data-theme] .lookup-card {
+    display: grid;
+    gap: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-2, var(--surface));
+    animation: lookup-in 0.25s var(--ease, ease) both;
+  }
+  :root[data-theme] .lookup-card[data-kind='returning'] { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface)); }
+  :root[data-theme] .lookup-card[data-kind='qr'] { border-color: color-mix(in srgb, var(--gold) 55%, var(--line)); background: color-mix(in srgb, var(--warn-soft) 60%, var(--surface)); }
+  :root[data-theme] .lookup-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  :root[data-theme] .lookup-icon { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
+  :root[data-theme] .lookup-card[data-kind='qr'] .lookup-icon { background: var(--warn-soft); color: var(--warn); }
+  :root[data-theme] .lookup-line { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+  :root[data-theme] .lookup-facts { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 16px; }
+  :root[data-theme] .lookup-facts > div { min-width: 0; }
+  :root[data-theme] .lookup-facts .wide { grid-column: 1 / -1; }
+  :root[data-theme] .lookup-facts dt { font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+  :root[data-theme] .lookup-facts dd { margin: 2px 0 0; font-size: 13.5px; color: var(--ink); overflow-wrap: anywhere; }
+  @keyframes lookup-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- Guest ID QR ---------- */
+  :root[data-theme] .gd-qr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 16px; }
+  :root[data-theme] .gd-qr > .panel { margin: 0; }
+  :root[data-theme] .gd-poster { padding: 10px 0 4px; }
+  :root[data-theme] .gd-steps { margin: 0 0 14px; padding-left: 20px; display: grid; gap: 10px; color: var(--ink-2); font-size: 14px; line-height: 1.5; }
+  :root[data-theme] .gd-steps b { color: var(--ink); }
+  :root[data-theme] .gd-notes { margin: 0; padding: 12px 0 0; list-style: none; display: grid; gap: 8px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-2); }
+  :root[data-theme] .gd-notes li { display: flex; gap: 8px; align-items: flex-start; }
+  :root[data-theme] .gd-notes svg { flex: none; margin-top: 3px; color: var(--ink-3); }
+  :root[data-theme] .gx-qr-tools { flex-wrap: wrap; }
+
+  /* ---------- QR registrations ---------- */
+  :root[data-theme] .gd-id-cell { display: inline-flex; align-items: center; gap: 10px; }
+  :root[data-theme] .gd-thumb {
+    flex: none; width: 56px; height: 38px; padding: 0; overflow: hidden; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--surface-3, var(--surface));
+    transition: transform var(--fast, 0.12s) ease, border-color var(--fast, 0.12s) ease;
+  }
+  :root[data-theme] .gd-thumb:hover { transform: scale(1.05); border-color: var(--accent); }
+  :root[data-theme] .gd-thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  :root[data-theme] .gd-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  :root[data-theme] .gd-verify { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+  :root[data-theme] .gd-doc { margin: 0; display: grid; gap: 8px; }
+  :root[data-theme] .gd-doc img { width: 100%; max-height: 380px; object-fit: contain; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-3, #f3efe4); }
+  :root[data-theme] .gd-doc figcaption { display: flex; gap: 6px; align-items: flex-start; font-size: 12.5px; color: var(--ink-3); }
+  :root[data-theme] .gd-doc figcaption svg { flex: none; margin-top: 2px; }
+
+  @media (max-width: 900px) {
+    :root[data-theme] .gd-qr { grid-template-columns: 1fr; }
+    :root[data-theme] .gd-verify { grid-template-columns: 1fr; }
+  }
+}
+
+/* ---------- Public registration page (extends the review page's light look in reviews.css) ---------- */
+.gr-row-even { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
+.gr-field select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--gr-line-strong);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--gr-ink);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 450;
+}
+.gr-field select:focus { outline: none; border-color: var(--gr-emerald); box-shadow: 0 0 0 4px rgba(24, 118, 83, 0.14); }
+.gr-field input[aria-invalid='true'],
+.gr-field select[aria-invalid='true'] { border-color: var(--gr-bad); }
+.gr-field-error { justify-self: start !important; color: var(--gr-bad) !important; font-weight: 550 !important; }
+.gr-field-note { justify-self: start !important; }
+.gr-drop {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 150px;
+  overflow: hidden;
+  border: 1.8px dashed var(--gr-line-strong);
+  border-radius: 16px;
+  background: #fffdf8;
+  color: var(--gr-ink-2);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.gr-drop:hover, .gr-drop:focus-within { border-color: var(--gr-emerald); background: var(--gr-mint); }
+.gr-drop[data-filled='yes'] { border-style: solid; border-color: var(--gr-sage); }
+.gr-drop[data-invalid='yes'] { border-color: var(--gr-bad); }
+/* The real input covers the whole tile, so a tap anywhere opens the camera or gallery. */
+.gr-field .gr-drop input[type='file'] { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; opacity: 0; cursor: pointer; }
+.gr-drop img { display: block; width: 100%; max-height: 260px; object-fit: contain; }
+.gr-drop-hint { display: grid; justify-items: center; gap: 8px; padding: 18px; font-size: 14px; font-weight: 550; text-align: center; }
+.gr-drop-hint svg { color: var(--gr-emerald); }
+@media (max-width: 380px) { .gr-row-even { grid-template-columns: 1fr; } }
+
+@media print {
+  .gd-poster { padding-top: 24mm; }
+}

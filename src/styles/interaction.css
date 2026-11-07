@@ -1,0 +1,453 @@
+/*
+ * How the signed-in product responds to the person using it. Layered over app.css.
+ *
+ * Nothing here runs on its own: every animation starts from a hover, a press, a focus or a change of
+ * state. Pointer positions come from src/app/interaction.tsx as --mx, --my, --tilt-x and --tilt-y.
+ */
+
+/*
+ * Not inherited, so writing them on a panel does not restyle everything inside it each frame.
+ * The pseudo-elements that draw the light ask for them with `inherit`.
+ */
+@property --mx { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@property --my { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@property --tilt-x { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@property --tilt-y { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+
+@keyframes err-in { from { opacity: 0; transform: translateY(-3px); } }
+@keyframes pop-out { to { opacity: 0; transform: translateY(-3px) scale(0.985); } }
+@keyframes bell-swing {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(11deg); }
+  55% { transform: rotate(-8deg); }
+  80% { transform: rotate(3deg); }
+}
+@keyframes count-pop { from { transform: scale(0.5); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media screen {
+  /* ---------- Atmosphere ---------- */
+
+  /* Paints behind the page and never repaints on scroll. */
+  :root[data-theme] .shell::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--atmosphere);
+  }
+
+  /* The theme switch crossfades the whole page, gradients and charts included. See setPrefs. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.28s;
+    animation-timing-function: ease;
+  }
+
+  :root[data-theme] { -webkit-tap-highlight-color: transparent; }
+
+  /* The control's clipping wrapper would cut off a ring drawn outside the button. */
+  :root[data-theme] .nav-seg-btn:focus-visible { outline-offset: -2px; }
+
+  /* ---------- Cursor light ---------- */
+
+  .cursor-light {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 90;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    will-change: transform;
+  }
+
+  .cursor-light.visible { opacity: 1; }
+
+  .cursor-halo {
+    position: absolute;
+    width: 460px;
+    height: 460px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(var(--light-rgb), var(--light-halo)) 0%, rgba(var(--light-rgb), calc(var(--light-halo) * 0.4)) 38%, transparent 70%);
+  }
+
+  /* ---------- Surface lighting ---------- */
+
+  :root[data-theme] .panel,
+  :root[data-theme] .mini-stat,
+  :root[data-theme] .ticket,
+  :root[data-theme] .menu-card,
+  :root[data-theme] .category-card,
+  :root[data-theme] .shift-card,
+  :root[data-theme] .kanban-col,
+  :root[data-theme] .modal,
+  :root[data-theme] .btn { position: relative; }
+
+  :root[data-theme] .panel,
+  :root[data-theme] .stat-card,
+  :root[data-theme] .category-card,
+  :root[data-theme] .modal { box-shadow: var(--shadow-sm), var(--edge-highlight); }
+
+  /* The rim: a 1px ring that brightens only near the cursor. */
+  :root[data-theme] .panel::after,
+  :root[data-theme] .stat-card::after,
+  :root[data-theme] .mini-stat::after,
+  :root[data-theme] .ticket::after,
+  :root[data-theme] .menu-card::after,
+  :root[data-theme] .category-card::after,
+  :root[data-theme] .shift-card::after,
+  :root[data-theme] .kanban-col::after,
+  :root[data-theme] .modal::after,
+  :root[data-theme] .popover::after,
+  :root[data-theme] .search-results::after {
+    --mx: inherit;
+    --my: inherit;
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(240px circle at var(--mx) var(--my), var(--light-edge), transparent 72%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  /* The fill: soft light on small surfaces. Big panels get it from the cursor's own halo. */
+  :root[data-theme] .stat-card::before,
+  :root[data-theme] .mini-stat::before,
+  :root[data-theme] .ticket::before,
+  :root[data-theme] .menu-card::before,
+  :root[data-theme] .category-card::before,
+  :root[data-theme] .shift-card::before,
+  :root[data-theme] .btn::after,
+  :root[data-theme] .nav-link::after,
+  :root[data-theme] .nav-seg-btn::after {
+    --mx: inherit;
+    --my: inherit;
+    content: '';
+    position: absolute;
+    inset: 0;
+    height: auto;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(190px circle at var(--mx) var(--my), var(--light-fill), transparent 72%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  :root[data-theme] .btn::after,
+  :root[data-theme] .nav-link::after,
+  :root[data-theme] .nav-seg-btn::after {
+    background: radial-gradient(90px circle at var(--mx) var(--my), var(--light-fill), transparent 72%);
+  }
+
+  :root[data-theme] .btn-primary::after,
+  :root[data-theme] .nav-link.active::after,
+  :root[data-theme] .nav-seg-btn.active::after {
+    background: radial-gradient(90px circle at var(--mx) var(--my), rgba(255, 255, 255, 0.14), transparent 72%);
+  }
+
+  /* Without the script there is no position to light from, so reduced motion skips this. */
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    :root[data-theme] .panel:hover::after,
+    :root[data-theme] .stat-card:hover::after,
+    :root[data-theme] .stat-card:hover::before,
+    :root[data-theme] .mini-stat:hover::after,
+    :root[data-theme] .mini-stat:hover::before,
+    :root[data-theme] .ticket:hover::after,
+    :root[data-theme] .ticket:hover::before,
+    :root[data-theme] .menu-card:hover::after,
+    :root[data-theme] .menu-card:hover::before,
+    :root[data-theme] .category-card:hover::after,
+    :root[data-theme] .category-card:hover::before,
+    :root[data-theme] .shift-card:hover::after,
+    :root[data-theme] .shift-card:hover::before,
+    :root[data-theme] .kanban-col:hover::after,
+    :root[data-theme] .modal:hover::after,
+    :root[data-theme] .popover:hover::after,
+    :root[data-theme] .search-results:hover::after,
+    :root[data-theme] .btn:hover:not(:disabled)::after,
+    :root[data-theme] .nav-link:hover::after,
+    :root[data-theme] .nav-seg-btn:hover::after { opacity: 1; }
+  }
+
+  /* ---------- Cards ---------- */
+
+  @media (hover: hover) and (pointer: fine) {
+    :root[data-theme] .stat-card,
+    :root[data-theme] .category-card,
+    :root[data-theme] .menu-card,
+    :root[data-theme] .ticket,
+    :root[data-theme] .shift-card {
+      transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+      transition:
+        transform 0.42s var(--ease),
+        box-shadow var(--hover-ms) ease,
+        border-color var(--hover-ms) ease,
+        opacity var(--fast) ease;
+    }
+
+    /* Closely follows the pointer while inside; the longer transition above eases it home. */
+    :root[data-theme] .is-tilting:not(.nav-link) {
+      transition: transform 0.09s linear, box-shadow var(--hover-ms) ease, border-color var(--hover-ms) ease;
+      will-change: transform;
+    }
+
+    :root[data-theme] .stat-card:hover,
+    :root[data-theme] .stat-card.is-link:hover,
+    :root[data-theme] .category-card:hover,
+    :root[data-theme] .menu-card:hover,
+    :root[data-theme] .ticket:hover,
+    :root[data-theme] .shift-card:hover {
+      transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(-1.5px);
+      border-color: color-mix(in srgb, var(--tone, var(--accent)) 34%, var(--line-strong));
+      box-shadow: var(--shadow-hover), var(--edge-highlight);
+    }
+
+    :root[data-theme] .stat-card.is-link:active,
+    :root[data-theme] .category-card:active {
+      transform: perspective(900px) translateY(0) scale(0.992);
+      transition-duration: 0.08s;
+    }
+
+    :root[data-theme] .panel { transition: border-color var(--hover-ms) ease; }
+    :root[data-theme] .panel:hover { border-color: var(--line-strong); }
+  }
+
+  /* Touch has no pointer to follow, so a card answers the finger with a slight press. */
+  @media (hover: none) {
+    :root[data-theme] .stat-card,
+    :root[data-theme] .category-card,
+    :root[data-theme] .menu-card,
+    :root[data-theme] .ticket,
+    :root[data-theme] .room-tile { transition: transform 0.14s var(--ease), border-color 0.14s ease; }
+
+    :root[data-theme] .stat-card:active,
+    :root[data-theme] .category-card:active,
+    :root[data-theme] .menu-card:active,
+    :root[data-theme] .ticket:active {
+      transform: scale(0.985);
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--line-strong));
+    }
+
+    :root[data-theme] .btn:hover:not(:disabled) { transform: none; box-shadow: none; }
+    :root[data-theme] .btn:active:not(:disabled) { transform: scale(0.97); }
+    :root[data-theme] .nav-link:hover { transform: none; box-shadow: none; background: transparent; }
+    :root[data-theme] .nav-link:active { background: var(--side-hover); }
+    :root[data-theme] .table tr.clickable:active { background: var(--surface-2); }
+  }
+
+  /* ---------- Buttons ---------- */
+
+  :root[data-theme] .btn { box-shadow: var(--edge-highlight), var(--shadow-sm); }
+  :root[data-theme] .btn-primary { box-shadow: var(--shadow-accent), inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+  :root[data-theme] .btn-ghost { box-shadow: none; }
+
+  @media (hover: hover) {
+    :root[data-theme] .btn:not(.btn-ghost):not(.btn-primary):not(.btn-danger):hover:not(:disabled) {
+      box-shadow: var(--edge-highlight), var(--shadow-md);
+    }
+
+    :root[data-theme] .btn-primary:hover:not(:disabled) {
+      box-shadow: var(--shadow-accent), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    }
+
+    :root[data-theme] .btn-danger:hover:not(:disabled) {
+      box-shadow: 0 8px 18px -12px color-mix(in srgb, var(--bad) 80%, transparent);
+    }
+  }
+
+  :root[data-theme] .btn:active:not(:disabled) {
+    transform: translateY(0.5px) scale(0.98);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.16);
+    transition-duration: 0.06s;
+  }
+
+  :root[data-theme] .btn:disabled {
+    opacity: 0.48;
+    filter: saturate(0.5);
+    box-shadow: none;
+  }
+
+  :root[data-theme] .btn[aria-busy='true'] { opacity: 0.85; filter: none; cursor: progress; }
+
+  :root[data-theme] .btn-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  /* A theme change turns the sun or moon a little as a reply. */
+  :root[data-theme] .btn-icon svg { transition: transform var(--normal) var(--ease), color var(--fast) ease; }
+  @media (hover: hover) {
+    :root[data-theme] .btn-icon:hover:not(:disabled) svg { transform: scale(1.08); }
+    :root[data-theme] [data-theme-toggle]:hover svg { transform: rotate(14deg); }
+    :root[data-theme] [data-theme-toggle]:hover { border-color: color-mix(in srgb, var(--accent) 30%, var(--line)); }
+    :root[data-theme] .bell-btn:hover svg { animation: bell-swing 0.5s var(--ease); transform-origin: 50% 12%; }
+  }
+
+  :root[data-theme] .bell-count { animation: count-pop 0.25s var(--ease); z-index: 2; }
+
+  :root[data-theme] .user-chip { transition: background var(--fast) ease, transform var(--fast) var(--ease); }
+  :root[data-theme] .user-chip:active { transform: scale(0.98); }
+  :root[data-theme] .user-chip .avatar { transition: box-shadow var(--fast) ease; }
+  @media (hover: hover) {
+    :root[data-theme] .user-chip:hover .avatar { box-shadow: inset 0 0 0 1.5px var(--champagne), 0 0 14px -3px color-mix(in srgb, var(--champagne) 70%, transparent); }
+  }
+
+  /* ---------- Inputs ---------- */
+
+  :root[data-theme] .input:focus {
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+
+  :root[data-theme] .input[aria-invalid='true']:focus {
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--bad) 18%, transparent);
+  }
+
+  :root[data-theme] .field-error { animation: err-in var(--normal) var(--ease); }
+
+  :root[data-theme] .search > svg { transition: color var(--fast) ease; }
+  :root[data-theme] .search:focus-within > svg { color: var(--accent); }
+  :root[data-theme] .search-kbd { transition: opacity var(--fast) ease; }
+  :root[data-theme] .search:focus-within .search-kbd { opacity: 0; }
+
+  :root[data-theme] .check input { transition: transform var(--fast) var(--ease); }
+  :root[data-theme] .check input:active { transform: scale(0.88); }
+
+  /* ---------- Dropdowns ---------- */
+
+  :root[data-theme] .popover,
+  :root[data-theme] .search-results { box-shadow: var(--shadow-lg), var(--edge-highlight); }
+
+  /* Keep the duration in step with POP_EXIT_MS in Shell.tsx. */
+  :root[data-theme] .popover.closing,
+  :root[data-theme] .search-results.closing {
+    pointer-events: none;
+    animation: pop-out 0.12s ease-in forwards;
+  }
+
+  :root[data-theme] .pop-item > svg { transition: transform var(--fast) var(--ease), color var(--fast) ease; }
+  :root[data-theme] .pop-item:active { background: var(--surface-3); }
+  @media (hover: hover) {
+    :root[data-theme] .pop-item:hover > svg { transform: translateX(2px); color: var(--accent); }
+  }
+
+  :root[data-theme] .account-head { display: none; }
+
+  @media (max-width: 720px) {
+    :root[data-theme] .account-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      line-height: 1.25;
+    }
+
+    :root[data-theme] .account-head span span { display: block; font-size: 12px; color: var(--ink-3); }
+  }
+
+  /* ---------- Modals ---------- */
+
+  :root[data-theme] .modal-root {
+    background: var(--overlay);
+    backdrop-filter: blur(4px);
+  }
+
+  /* ---------- Tables ---------- */
+
+  :root[data-theme] .table tbody tr { transition: background-color var(--fast) ease; }
+  :root[data-theme] .table td { transition: none; }
+
+  @media (hover: hover) {
+    :root[data-theme] .table tbody tr:hover td,
+    :root[data-theme] .table tr.clickable:hover td { background: transparent; }
+
+    :root[data-theme] .table tbody tr:hover { background-color: color-mix(in srgb, var(--mint) 50%, transparent); }
+    :root[data-theme] .table tr.clickable:hover { background-color: var(--mint); }
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    :root[data-theme] .table tbody tr:hover {
+      background-image: radial-gradient(320px circle at var(--mx) var(--my), var(--light-fill), transparent 76%);
+    }
+  }
+
+  :root[data-theme] .table tr.clickable:active { background-color: var(--surface-3); }
+
+  :root[data-theme] .badge { transition: background-color var(--normal) ease, color var(--normal) ease, box-shadow var(--normal) ease; }
+
+  :root[data-theme] .pager-num { transition: background var(--fast) ease, color var(--fast) ease, border-color var(--fast) ease, transform var(--fast) var(--ease); }
+  :root[data-theme] .pager-num:active { transform: scale(0.93); }
+
+  /* ---------- Tabs and segmented controls ---------- */
+
+  :root[data-theme] .tabs { position: relative; }
+
+  :root[data-theme] .tab-thumb {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: calc(var(--w, 0px) - 20px);
+    border-radius: 2px 2px 0 0;
+    background: var(--accent);
+    pointer-events: none;
+    transform: translateX(calc(var(--x, 0px) + 10px));
+  }
+
+  :root[data-theme] .tab-thumb.ready { transition: transform var(--normal) var(--ease), width var(--normal) var(--ease); }
+  :root[data-theme] .tab[aria-selected='true']::after { transform: scaleX(0); }
+  :root[data-theme] .tab:active { color: var(--accent); }
+  :root[data-theme] .tab .count { transition: background var(--fast) ease, color var(--fast) ease; }
+
+  /* ---------- Other small surfaces ---------- */
+
+  :root[data-theme] .mini-stat { transition: border-color var(--fast) ease; }
+  :root[data-theme] .tl-cell:active { background: var(--accent-soft); }
+  :root[data-theme] .link-btn:active { opacity: 0.7; }
+
+  /* ---------- Reduced motion ---------- */
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-light { display: none; }
+
+    :root[data-theme] .stat-card,
+    :root[data-theme] .stat-card:hover,
+    :root[data-theme] .stat-card.is-link:hover,
+    :root[data-theme] .stat-card:active,
+    :root[data-theme] .category-card,
+    :root[data-theme] .category-card:hover,
+    :root[data-theme] .category-card:active,
+    :root[data-theme] .menu-card,
+    :root[data-theme] .menu-card:hover,
+    :root[data-theme] .menu-card:active,
+    :root[data-theme] .ticket,
+    :root[data-theme] .ticket:hover,
+    :root[data-theme] .ticket:active,
+    :root[data-theme] .shift-card,
+    :root[data-theme] .shift-card:hover,
+    :root[data-theme] .btn:active:not(:disabled),
+    :root[data-theme] .nav-seg-btn:active,
+    :root[data-theme] [data-theme-toggle]:hover svg,
+    :root[data-theme] .btn-icon:hover:not(:disabled) svg { transform: none; }
+
+    :root[data-theme] .bell-btn:hover svg { animation: none; }
+  }
+}

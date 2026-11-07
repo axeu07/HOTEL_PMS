@@ -1,0 +1,327 @@
+/* Guest reviews: the Guest Experience dashboard (token-driven) and the public QR review page (self-contained). */
+
+/* ---------- Dashboard ---------- */
+
+@media screen {
+  :root[data-theme] .gx-hero { margin-bottom: 16px; }
+
+  :root[data-theme] .gx-summary {
+    display: grid;
+    grid-template-columns: minmax(150px, 220px) minmax(0, 1fr);
+    gap: clamp(16px, 4vw, 40px);
+    align-items: center;
+  }
+
+  :root[data-theme] .gx-average { display: grid; justify-items: start; gap: 2px; }
+  :root[data-theme] .gx-average-value { font-family: var(--serif); font-size: 56px; line-height: 1; font-weight: 500; color: var(--ink); }
+  :root[data-theme] .gx-average-scale { font-size: 13px; color: var(--ink-3); margin-bottom: 4px; }
+  :root[data-theme] .gx-average-count { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+
+  :root[data-theme] .gx-stars { display: inline-flex; gap: 1px; color: var(--line-strong); line-height: 1; }
+  :root[data-theme] .gx-stars [data-on] { color: var(--gold); }
+
+  :root[data-theme] .gx-distribution { display: grid; gap: 8px; }
+  :root[data-theme] .gx-bar { display: grid; grid-template-columns: 34px minmax(0, 1fr) 30px; align-items: center; gap: 10px; font-size: 13px; }
+  :root[data-theme] .gx-bar-label { color: var(--ink-2); white-space: nowrap; }
+  :root[data-theme] .gx-bar-label span { color: var(--gold); }
+  :root[data-theme] .gx-bar-track { height: 8px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+  :root[data-theme] .gx-bar-fill { display: block; height: 100%; border-radius: inherit; background: var(--accent-grad); transition: width 0.5s var(--ease); }
+  :root[data-theme] .gx-bar-count { text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+  :root[data-theme] .gx-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+  :root[data-theme] .gx-filters .segmented { flex-wrap: wrap; max-width: 100%; }
+  :root[data-theme] .gx-date { width: auto; min-width: 150px; }
+  :root[data-theme] .gx-range { display: flex; align-items: center; gap: 8px; color: var(--ink-3); font-size: 13px; }
+  :root[data-theme] .gx-range .input { width: auto; }
+
+  :root[data-theme] .gx-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  :root[data-theme] .gx-review {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+  }
+  :root[data-theme] .gx-review-face { font-size: 28px; line-height: 1.2; }
+  :root[data-theme] .gx-review-top { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+  :root[data-theme] .gx-review-rating { font-size: 12.5px; color: var(--ink-3); }
+  :root[data-theme] .gx-review-comment { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); overflow-wrap: anywhere; white-space: pre-line; }
+  :root[data-theme] .gx-review-date { font-size: 12.5px; color: var(--ink-3); text-align: right; white-space: nowrap; }
+
+  :root[data-theme] .gx-poster { text-align: center; display: grid; justify-items: center; gap: 6px; padding: 8px 0 4px; }
+  :root[data-theme] .gx-poster-kicker { margin: 0; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brass); font-weight: 600; }
+  :root[data-theme] .gx-poster-title { margin: 0; font-family: var(--serif); font-size: 28px; font-weight: 500; }
+  :root[data-theme] .gx-poster-sub { margin: 0 0 6px; max-width: 34ch; color: var(--ink-2); font-size: 14px; }
+  :root[data-theme] .qr-code { width: min(260px, 70vw); height: auto; aspect-ratio: 1; border-radius: 14px; border: 1px solid var(--line); background: #fff; }
+  :root[data-theme] .gx-poster-url { margin: 4px 0 0; font-size: 12px; color: var(--ink-3); overflow-wrap: anywhere; }
+  :root[data-theme] .gx-qr-tools { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+  :root[data-theme] .gx-qr-note { display: flex; gap: 6px; align-items: flex-start; margin: 12px 0 0; }
+  :root[data-theme] .gx-qr-note svg { flex: none; margin-top: 2px; }
+
+  @media (max-width: 720px) {
+    :root[data-theme] .gx-summary { grid-template-columns: 1fr; }
+    :root[data-theme] .gx-review { grid-template-columns: 32px minmax(0, 1fr); }
+    :root[data-theme] .gx-review-date { grid-column: 2; text-align: left; }
+    :root[data-theme] .gx-review-date br { display: none; }
+  }
+}
+
+@media print {
+  .gx-poster { text-align: center; display: grid; justify-items: center; gap: 10px; padding-top: 24mm; }
+  .gx-poster-kicker { margin: 0; font-size: 14pt; letter-spacing: 0.16em; text-transform: uppercase; color: #8d6216; }
+  .gx-poster-title { margin: 0; font-family: Georgia, serif; font-size: 40pt; font-weight: 400; }
+  .gx-poster-sub { margin: 0; font-size: 14pt; max-width: 30ch; }
+  .qr-code { width: 110mm; height: 110mm; }
+  .gx-poster-url { font-size: 10pt; color: #49544e; }
+}
+
+/* ---------- Public review page: always the light Warm Ivory look, whatever the product theme ---------- */
+
+.gr {
+  --gr-ivory: #faf8f2;
+  --gr-card: #fffefa;
+  --gr-ink: #202923;
+  --gr-ink-2: #4c574f;
+  --gr-line: #eae5d9;
+  --gr-line-strong: #dcd5c5;
+  --gr-emerald: #187653;
+  --gr-emerald-deep: #105c43;
+  --gr-mint: #ecf7ef;
+  --gr-sage: #a8cdb3;
+  --gr-champagne: #e9c98c;
+  --gr-gold: #d5a653;
+  --gr-brass: #8c6323;
+  --gr-bad: #b2453a;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: start center;
+  padding: clamp(14px, 5vw, 40px) 14px 40px;
+  background:
+    radial-gradient(900px 420px at 85% -10%, rgba(168, 205, 179, 0.45), transparent 70%),
+    radial-gradient(700px 360px at -10% 0%, rgba(233, 201, 140, 0.35), transparent 70%),
+    var(--gr-ivory);
+  color: var(--gr-ink);
+  font-family: var(--sans);
+  color-scheme: light;
+}
+
+.gr * { box-sizing: border-box; }
+
+.gr-card {
+  width: min(100%, 520px);
+  padding: clamp(22px, 6vw, 36px);
+  border: 1px solid var(--gr-line);
+  border-radius: 28px;
+  background: var(--gr-card);
+  box-shadow: 0 1px 2px rgba(35, 30, 15, 0.05), 0 24px 60px -28px rgba(24, 118, 83, 0.35);
+  animation: gr-rise 0.5s cubic-bezier(0.22, 0.8, 0.3, 1) both;
+}
+
+.gr-center { text-align: center; }
+.gr h1 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: clamp(26px, 7vw, 34px); line-height: 1.15; letter-spacing: -0.01em; }
+.gr-kicker { margin: 0 0 10px; font-size: 12px; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gr-brass); }
+.gr-lead { margin: 10px 0 22px; color: var(--gr-ink-2); font-size: 15px; }
+
+.gr-faces { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(2px, 1.5vw, 8px); }
+
+.gr-face {
+  appearance: none;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 10px 0 8px;
+  border: 1.5px solid transparent;
+  border-radius: 18px;
+  background: transparent;
+  color: var(--gr-ink-2);
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Three stacked layers so their transforms never fight: float (idle drift) > emoji (hover / select scale) > glyph (blink). */
+.gr-float {
+  position: relative;
+  display: block;
+  --dy: -3px; --dx: 0px; --rot: 2deg; --dur: 4.2s;
+  animation: gr-float var(--dur) ease-in-out infinite;
+  animation-delay: calc(var(--n, 0) * -0.7s);
+}
+/* Each face moves with its own mood. */
+.gr-face[data-rating='1'] .gr-float { --n: 1; --dy: 2px; --rot: -4deg; --dur: 5.4s; }  /* slow, drooping sway */
+.gr-face[data-rating='2'] .gr-float { --n: 2; --dy: 1.5px; --rot: 3deg; --dur: 5s; }
+.gr-face[data-rating='3'] .gr-float { --n: 3; --dy: -1px; --dx: 2px; --rot: 0deg; --dur: 3.6s; } /* sideways glance */
+.gr-face[data-rating='4'] .gr-float { --n: 4; --dy: -3px; --rot: 3deg; --dur: 4s; }
+.gr-face[data-rating='5'] .gr-float { --n: 5; --dy: -5px; --rot: -4deg; --dur: 3s; }  /* lively bob */
+
+.gr-emoji {
+  display: block;
+  font-size: clamp(30px, 9.5vw, 42px);
+  line-height: 1;
+  filter: grayscale(0.55);
+  opacity: 0.8;
+  transform: scale(1);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.5, 1), filter 0.3s ease, opacity 0.3s ease;
+}
+.gr-glyph {
+  display: block;
+  transform-origin: 50% 58%;
+  animation: gr-blink 5.5s ease-in-out infinite;
+  animation-delay: calc(var(--n, 0) * -1.3s);
+}
+
+.gr-face-label { font-size: 11px; font-weight: 550; line-height: 1.1; text-align: center; transition: color 0.2s ease; }
+@media (hover: hover) {
+  .gr-face:hover .gr-emoji { transform: scale(1.18); filter: none; opacity: 1; }
+  .gr-face[data-state='on']:hover .gr-emoji { transform: scale(1.4); }
+}
+.gr-face:active .gr-emoji { transform: scale(1.05); transition-duration: 0.12s; }
+.gr-face:focus-visible { outline: 3px solid var(--gr-sage); outline-offset: 2px; }
+
+.gr-face[data-state='on'] { background: var(--gr-mint); border-color: var(--gr-sage); color: var(--gr-emerald-deep); }
+.gr-face[data-state='on'] .gr-emoji { filter: none; opacity: 1; transform: scale(1.32); animation: gr-pop 0.6s cubic-bezier(0.34, 1.56, 0.5, 1); }
+.gr-face[data-state='on'] .gr-glyph { animation: gr-blink 3.8s ease-in-out infinite, gr-express 2.6s ease-in-out 0.6s infinite; }
+
+/* Tiny sparkles that burst out once on selection. */
+.gr-stars { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
+.gr-stars i {
+  position: absolute;
+  width: 9px; height: 9px; margin: -4.5px;
+  background: var(--gr-gold);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  opacity: 0;
+  animation: gr-sparkle 0.8s ease-out both;
+}
+.gr-stars i:nth-child(3n) { background: var(--gr-champagne); }
+.gr-stars i:nth-child(3n + 1) { background: var(--gr-sage); }
+.gr-stars i:nth-child(2n) { animation-delay: 0.06s; }
+.gr-face[data-state='on'] .gr-face-label { font-weight: 700; }
+.gr-face[data-state='off'] { opacity: 0.6; }
+
+.gr-message {
+  min-height: 3.2em;
+  margin: 14px 0 6px;
+  padding: 0 4px;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.35;
+  color: var(--gr-emerald-deep);
+  animation: gr-fade 0.35s ease both;
+}
+
+.gr-field { display: grid; gap: 6px; margin-top: 14px; font-size: 13.5px; font-weight: 600; color: var(--gr-ink); }
+.gr-field em { font-style: normal; font-weight: 450; color: var(--gr-ink-2); }
+.gr-field small { justify-self: end; font-weight: 450; color: var(--gr-ink-2); font-size: 12px; }
+.gr-field textarea,
+.gr-field input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--gr-line-strong);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--gr-ink);
+  font: inherit;
+  font-size: 16px; /* 16px stops iOS zooming into the field */
+  font-weight: 450;
+  resize: vertical;
+}
+.gr-field textarea:focus,
+.gr-field input:focus { outline: none; border-color: var(--gr-emerald); box-shadow: 0 0 0 4px rgba(24, 118, 83, 0.14); }
+.gr-row { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 12px; }
+
+.gr-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.gr-error { margin: 14px 0 0; padding: 10px 14px; border-radius: 12px; background: #fcebe8; color: var(--gr-bad); font-size: 14px; }
+
+.gr-submit {
+  appearance: none;
+  width: 100%;
+  margin-top: 20px;
+  padding: 15px 20px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #22855f 0%, #187653 42%, #105c43 100%);
+  color: #fffefa;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -12px rgba(24, 118, 83, 0.7);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.gr-submit:hover { transform: translateY(-1px); }
+.gr-submit:active { transform: translateY(0) scale(0.99); }
+.gr-submit[data-ready='no'] { opacity: 0.6; }
+.gr-submit:disabled { opacity: 0.7; cursor: progress; }
+.gr-submit:focus-visible { outline: 3px solid var(--gr-champagne); outline-offset: 3px; }
+.gr-privacy { margin: 12px 0 0; text-align: center; font-size: 12.5px; color: var(--gr-ink-2); }
+
+/* Thank-you */
+.gr-thanks { position: relative; display: grid; justify-items: center; gap: 10px; padding: 12px 0 6px; text-align: center; }
+.gr-thanks p { margin: 0; color: var(--gr-ink-2); font-size: 16px; line-height: 1.5; max-width: 34ch; }
+.gr-thanks-sign { font-family: var(--serif); font-style: italic; color: var(--gr-brass) !important; font-size: 18px !important; }
+.gr-check { width: 92px; height: 92px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.gr-check-ring { stroke: var(--gr-sage); stroke-width: 4; fill: var(--gr-mint); stroke-dasharray: 214; stroke-dashoffset: 214; animation: gr-draw 0.7s ease-out 0.05s forwards; }
+.gr-check-tick { stroke: var(--gr-emerald); stroke-width: 6; stroke-dasharray: 60; stroke-dashoffset: 60; animation: gr-draw 0.45s ease-out 0.6s forwards; }
+.gr-thanks h1 { animation: gr-rise 0.5s ease 0.5s both; }
+
+.gr-sparks { position: absolute; top: 46px; left: 50%; width: 0; height: 0; pointer-events: none; }
+.gr-sparks span {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px;
+  border-radius: 50%;
+  background: var(--gr-gold);
+  opacity: 0;
+  animation: gr-spark 0.9s ease-out 0.7s both;
+  transform: rotate(calc(var(--i) * 36deg)) translateY(0);
+}
+.gr-sparks span:nth-child(3n) { background: var(--gr-sage); }
+.gr-sparks span:nth-child(3n + 1) { background: var(--gr-champagne); }
+
+@keyframes gr-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes gr-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes gr-pop { 0% { transform: scale(0.8) rotate(-10deg); } 55% { transform: scale(1.5) rotate(6deg); } 100% { transform: scale(1.32) rotate(0); } }
+@keyframes gr-float {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  50% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); }
+}
+/* A quick squash reads as a blink without redrawing the emoji. */
+@keyframes gr-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.88) scaleX(1.03); }
+}
+@keyframes gr-express {
+  0%, 100% { transform: rotate(0) scale(1); }
+  30% { transform: rotate(-5deg) scale(1.04); }
+  70% { transform: rotate(5deg) scale(1.04); }
+}
+@keyframes gr-sparkle {
+  0% { opacity: 0; transform: rotate(var(--a)) translateY(-8px) scale(0.2); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(-40px) scale(calc(var(--s) * 1.1)) rotate(90deg); }
+}
+@keyframes gr-draw { to { stroke-dashoffset: 0; } }
+@keyframes gr-spark {
+  0% { opacity: 1; transform: rotate(calc(var(--i) * 36deg)) translateY(0) scale(1); }
+  100% { opacity: 0; transform: rotate(calc(var(--i) * 36deg)) translateY(-70px) scale(0.3); }
+}
+
+@media (max-width: 380px) {
+  .gr-face-label { font-size: 10px; }
+  .gr-row { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gr *, .gr *::before, .gr *::after { animation-duration: 0.01ms !important; animation-delay: 0s !important; transition-duration: 0.01ms !important; }
+  .gr-check-ring, .gr-check-tick { stroke-dashoffset: 0; }
+  .gr-sparks, .gr-stars { display: none; }
+  .gr-float, .gr-glyph, .gr-face[data-state='on'] .gr-glyph, .gr-face[data-state='on'] .gr-emoji { animation: none !important; }
+}

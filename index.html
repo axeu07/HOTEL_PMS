@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Folio hotel management suite: interactive product demonstration with fictional sample data." />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Checkmate Stays · Folio hotel management demo</title>
+    <script>
+      // Light is the product default. A saved dark theme would otherwise flash pale paper until the app mounts.
+      try {
+        if (location.pathname.indexOf('/app') === 0 && (JSON.parse(localStorage.getItem('folio.demo.prefs')) || {}).theme === 'dark') {
+          document.documentElement.dataset.boot = 'dark';
+        }
+      } catch (e) {}
+    </script>
+    <style>:root[data-boot='dark'], :root[data-boot='dark'] body { background: #141a17; }</style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,253 @@
+/*
+ * Checkmate Stays design tokens: soft emerald, warm ivory, sage, champagne.
+ *
+ * The single source of colour for the signed-in product. `data-theme` is set only while the app shell
+ * is mounted, so the public site keeps the :root palette in global.css. Rules elsewhere read these
+ * names and never decide between themes themselves.
+ *
+ * Text tokens are darker than the swatches they relate to where the swatch would fail 4.5:1 on ivory
+ * (bronze, coral, muted blue, muted grey, which also means no text is set in the lightest grey). The swatches stay in use for marks and decoration.
+ * Chart series --c1 to --c5 are validated per theme for lightness, chroma, colour-blind separation
+ * and contrast against --surface. Re-validate if they change.
+ */
+
+:root[data-theme] {
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-sm: 9px;
+  --sidebar-w: clamp(200px, 15.5vw, 224px);
+  --page-x: clamp(14px, calc(2.6vw - 18px), 32px);
+  --ease: cubic-bezier(0.22, 0.8, 0.3, 1);
+  --fast: 0.16s;
+  --normal: 0.22s;
+  --hover-ms: 0.2s;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --paper: #faf8f2;
+  --surface: #fffefa;
+  --surface-2: #f8f4eb;
+  --surface-3: #f1ecdf;
+  --surface-sheen: linear-gradient(180deg, #fffefb, #fffdf8);
+
+  /* Text and lines */
+  --ink: #202923;
+  --ink-2: #4c574f;
+  --ink-3: #67716a;
+  --line: #eae5d9;
+  --line-strong: #dcd5c5;
+
+  /* Emerald */
+  --accent: #187653;
+  --accent-hover: #105c43;
+  --on-accent: #fffefa;
+  --accent-soft: #ddf1e5;
+  --accent-grad: linear-gradient(135deg, #22855f 0%, #187653 42%, #105c43 100%);
+  --accent-grad-hover: linear-gradient(135deg, #1c7a56 0%, #14684a 42%, #0d5039 100%);
+  --mint: #ecf7ef;
+  --sage: #a8cdb3;
+  --tile-occupied: #187653;
+  --on-tile-occupied: #fffefa;
+
+  /* Champagne and gold */
+  --champagne: #e9c98c;
+  --gold: #d5a653;
+  --on-gold: #3a2a0c;
+  --brass: #8c6323;
+  --brass-bright: #d5a653;
+  --brass-soft: #fbf1dc;
+
+  /* Coral and blue accents */
+  --coral: #f2a69c;
+  --coral-deep: #cf6a5a;
+  --blush: #fcebe8;
+  --powder: #b9d5ea;
+
+  /* States */
+  --good: #187653;
+  --good-soft: #ddf1e5;
+  --warn: #8f621c;
+  --warn-soft: #fbf1dc;
+  --bad: #b2453a;
+  --bad-soft: #fcebe8;
+  --info: #3f6a93;
+  --info-soft: #e9f2f8;
+  --quiet-soft: #f1ecdf;
+
+  /* Chart series */
+  --c1: #187653;
+  --c2: #bd8526;
+  --c3: #3b7dbd;
+  --c4: #d2654f;
+  --c5: #7e62ba;
+  --grid: #efeadf;
+  --bar-now: #187653;
+  --bar-ahead: #8cc4a2;
+  --area-lift: #6fd0a4;
+
+  /* Depth */
+  --edge-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --shadow-sm: 0 1px 2px rgba(70, 60, 30, 0.04), 0 8px 22px -14px rgba(70, 60, 30, 0.16);
+  --shadow-md: 0 14px 30px -18px rgba(60, 55, 30, 0.28), 0 3px 8px -5px rgba(60, 55, 30, 0.08);
+  --shadow-hover: 0 20px 38px -22px rgba(40, 70, 50, 0.32), 0 6px 14px -9px rgba(60, 55, 30, 0.12);
+  --shadow-lg: 0 26px 60px -24px rgba(50, 55, 35, 0.34), 0 6px 18px -10px rgba(50, 55, 35, 0.12);
+  --shadow-accent: 0 10px 20px -10px rgba(16, 92, 67, 0.6);
+  --overlay: rgba(44, 52, 42, 0.28);
+
+  /* What the cursor casts */
+  --light-rgb: 72, 158, 118;
+  --light-halo: 0.05;
+  --light-edge: color-mix(in srgb, var(--accent) 30%, transparent);
+  --light-fill: rgba(255, 255, 255, 0.5);
+
+  /* The room behind the page */
+  --atmosphere:
+    radial-gradient(760px 420px at 70% 2%, rgba(168, 205, 179, 0.2), transparent 72%),
+    radial-gradient(620px 380px at 8% 0%, rgba(233, 201, 140, 0.1), transparent 70%),
+    radial-gradient(900px 560px at 100% 100%, rgba(168, 205, 179, 0.16), transparent 72%),
+    radial-gradient(640px 460px at 20% 100%, rgba(233, 201, 140, 0.08), transparent 70%);
+
+  /* Painted decoration */
+  --wave-1: #cfe6d6;
+  --wave-2: #a8cdb3;
+  --wave-3: #e3f0e2;
+  --hill-far: #d9e7d4;
+  --hill-mid: #f1e2c3;
+  --hill-near: #bfd8bd;
+  --leaf: #7fa486;
+  --leaf-soft: #a9c6a4;
+  --leaf-vein: #e8f2e4;
+  --art-tone: #f2dab4;
+  --art-line: #fffaf0;
+  --decor-strength: 1;
+
+  /* Sidebar */
+  --side-bg: linear-gradient(180deg, #fffefb 0%, #fdfbf5 55%, #f9f5ea 100%);
+  --side-ink: #2a332d;
+  --side-sub: #67716a;
+  --side-icon: #4f7a63;
+  --side-line: #efeae0;
+  --side-hover: rgba(24, 118, 83, 0.07);
+  --side-accent: #187653;
+  --side-active: linear-gradient(100deg, #2c8260 0%, #1b7855 46%, #125f46 100%);
+  --side-on-active: #fffefa;
+  --side-active-shadow: 0 10px 20px -10px rgba(16, 92, 67, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  --side-card: #fffefa;
+  --side-card-shadow: 0 8px 20px -14px rgba(70, 60, 30, 0.24), 0 0 0 1px rgba(234, 229, 217, 0.75);
+  --side-well: #f8f4eb;
+  --brand-tone: #a97935;
+}
+
+/*
+ * A dusk version of the same room, not the light theme inverted: muted charcoal with a green cast,
+ * desaturated emerald and warm gold, with layers told apart by small steps of lightness.
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --paper: #141a17;
+  --surface: #1b2320;
+  --surface-2: #212b27;
+  --surface-3: #29342f;
+  --surface-sheen: linear-gradient(180deg, #1e2723, #1b2320);
+
+  --ink: #eef0e8;
+  --ink-2: #c6cdc4;
+  --ink-3: #9aa59d;
+  --line: #2a3530;
+  --line-strong: #3a4741;
+
+  --accent: #62c29a;
+  --accent-hover: #7bd0ac;
+  --on-accent: #0e1f18;
+  --accent-soft: #1f3a2e;
+  --accent-grad: linear-gradient(135deg, #71cba5 0%, #5dba93 45%, #479f7b 100%);
+  --accent-grad-hover: linear-gradient(135deg, #80d4b0 0%, #6cc4a0 45%, #55ae89 100%);
+  --mint: #1c2f26;
+  --sage: #5d7f6a;
+  --tile-occupied: #2a6a50;
+  --on-tile-occupied: #eaf6f0;
+
+  --champagne: #c9aa70;
+  --gold: #d2ac62;
+  --on-gold: #2a1f0a;
+  --brass: #d8b778;
+  --brass-bright: #e2c48a;
+  --brass-soft: #33291a;
+
+  --coral: #d98a7c;
+  --coral-deep: #e39a8c;
+  --blush: #3a2522;
+  --powder: #5f7d96;
+
+  --good: #6cc79f;
+  --good-soft: #1f3a2e;
+  --warn: #dfb76a;
+  --warn-soft: #33291a;
+  --bad: #ec9a8a;
+  --bad-soft: #3a2522;
+  --info: #8fb6da;
+  --info-soft: #1f2e3a;
+  --quiet-soft: #29342f;
+
+  --c1: #35a578;
+  --c2: #ad8030;
+  --c3: #5590cf;
+  --c4: #cf6f58;
+  --c5: #9078cc;
+  --grid: #27312c;
+  --bar-now: #4fb88d;
+  --bar-ahead: #3c6b57;
+  --area-lift: #62c29a;
+
+  --edge-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 22px -16px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 14px 28px -16px rgba(0, 0, 0, 0.7);
+  --shadow-hover: 0 20px 38px -22px rgba(0, 0, 0, 0.85), 0 6px 14px -10px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 26px 60px -22px rgba(0, 0, 0, 0.8);
+  --shadow-accent: 0 10px 20px -10px rgba(98, 194, 154, 0.45);
+  --overlay: rgba(6, 10, 8, 0.55);
+
+  --light-rgb: 120, 200, 165;
+  --light-halo: 0.05;
+  --light-edge: color-mix(in srgb, var(--accent) 55%, transparent);
+  --light-fill: color-mix(in srgb, var(--accent) 7%, transparent);
+
+  --atmosphere:
+    radial-gradient(760px 420px at 70% 0%, rgba(98, 194, 154, 0.07), transparent 72%),
+    radial-gradient(620px 380px at 8% 0%, rgba(210, 172, 98, 0.035), transparent 70%),
+    radial-gradient(900px 560px at 100% 100%, rgba(98, 194, 154, 0.05), transparent 72%);
+
+  --wave-1: #2c4a3c;
+  --wave-2: #38604d;
+  --wave-3: #243c31;
+  --hill-far: #22312a;
+  --hill-mid: #2f2c20;
+  --hill-near: #27392f;
+  --leaf: #4c7a62;
+  --leaf-soft: #3d6250;
+  --leaf-vein: #1f2d27;
+  --art-tone: #5a4a30;
+  --art-line: #1f2925;
+  --decor-strength: 0.8;
+
+  --side-bg: linear-gradient(180deg, #19201d 0%, #161d1a 60%, #131917 100%);
+  --side-ink: #dfe4dc;
+  --side-sub: #94a097;
+  --side-icon: #8db8a2;
+  --side-line: #27312c;
+  --side-hover: rgba(160, 215, 190, 0.07);
+  --side-accent: #62c29a;
+  --side-active: linear-gradient(100deg, #6ec7a2 0%, #5abb92 50%, #459f7a 100%);
+  --side-on-active: #0e1f18;
+  --side-active-shadow: 0 10px 22px -12px rgba(98, 194, 154, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  --side-card: #1f2824;
+  --side-card-shadow: 0 8px 20px -14px rgba(0, 0, 0, 0.7), 0 0 0 1px #2a3530;
+  --side-well: #161d1a;
+  --brand-tone: #d8b778;
+}
+
+:root[data-density='compact'] { --cell-y: 7px; }

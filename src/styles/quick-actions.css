@@ -1,0 +1,203 @@
+/* Quick Actions: the dashboard row and the action centre. Colours come only from tokens.css. */
+
+@media screen {
+  /* ---------- Dashboard row ---------- */
+
+  :root[data-theme] .qa-section { margin-bottom: 16px; }
+
+  :root[data-theme] .qa-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  :root[data-theme] .qa-section-head h2 { font-size: 17px; }
+
+  :root[data-theme] .qa-view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 550;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  :root[data-theme] .qa-view-all svg { transition: transform var(--fast) var(--ease); }
+  :root[data-theme] .qa-view-all:hover { color: var(--accent-hover); }
+  :root[data-theme] .qa-view-all:hover svg { transform: translateX(2px); }
+
+  :root[data-theme] .qa-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  :root[data-theme] .qa-skeleton { height: 88px; }
+
+  :root[data-theme] .qa-card { gap: 3px; padding: 8px 12px; border-radius: 14px; }
+  :root[data-theme] .qa-card .stat-icon { width: 24px; height: 24px; border-radius: 8px; }
+
+  :root[data-theme] .qa-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+  :root[data-theme] .qa-urgency {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--tone);
+    white-space: nowrap;
+  }
+
+  :root[data-theme] .qa-urgency i { width: 6px; height: 6px; border-radius: 50%; background: var(--tone-mark); }
+
+  :root[data-theme] .qa-card-main { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; min-width: 0; }
+  :root[data-theme] .qa-card-title { min-width: 0; font-size: 13.5px; line-height: 1.25; font-weight: 550; }
+
+  :root[data-theme] .qa-card-count {
+    flex: none;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 450;
+    letter-spacing: -0.012em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  :root[data-theme] .qa-card-note { margin: 0; font-size: 12px; line-height: 1.3; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ---------- Filters ---------- */
+
+  :root[data-theme] .qa-filters { margin-bottom: 16px; }
+  :root[data-theme] .qa-tabs { padding: 4px 14px 0; }
+  :root[data-theme] .qa-toolbar { border-bottom: 0; }
+
+  :root[data-theme] .qa-seg-count { margin-left: 3px; opacity: 0.72; font-variant-numeric: tabular-nums; }
+
+  :root[data-theme] .qa-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+    border-radius: 999px;
+    background: var(--mint);
+    color: var(--accent);
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 550;
+    cursor: pointer;
+    transition: background var(--fast) ease;
+  }
+
+  :root[data-theme] .qa-chip:hover { background: var(--accent-soft); }
+
+  /* ---------- Categories ---------- */
+
+  :root[data-theme] .qa-category { margin-bottom: 16px; }
+  :root[data-theme] .qa-all-clear { margin-bottom: 16px; }
+
+  :root[data-theme] .qa-group { padding: 4px 0 8px; }
+  :root[data-theme] .qa-group + .qa-group { border-top: 1px solid var(--line); }
+
+  :root[data-theme] .qa-group-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    padding: 10px 20px 6px;
+  }
+
+  :root[data-theme] .qa-group-head h3 { font-size: 13.5px; font-weight: 600; }
+
+  :root[data-theme] .qa-group-head .count {
+    min-width: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--surface-3);
+    font-size: 11.5px;
+    line-height: 18px;
+    text-align: center;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  :root[data-theme] .qa-list { list-style: none; margin: 0; padding: 0; }
+
+  :root[data-theme] .qa-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px 16px;
+    padding: 9px 20px 9px 26px;
+    transition: background var(--fast) ease;
+  }
+
+  :root[data-theme] .qa-item:hover { background: var(--surface-2); }
+
+  /* The accent is decoration. The priority badge says the same thing in words. */
+  :root[data-theme] .qa-item::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 17px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sage);
+  }
+
+  :root[data-theme] .qa-item[data-priority='high']::before { background: var(--bad); }
+  :root[data-theme] .qa-item[data-resolved]::before { background: var(--line-strong); }
+  :root[data-theme] .qa-item[data-resolved] .qa-item-title a { color: var(--ink-2); }
+
+  :root[data-theme] .qa-item-main { min-width: 0; }
+  :root[data-theme] .qa-item-title { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; font-size: 13.5px; font-weight: 550; }
+  :root[data-theme] .qa-item-title a { color: var(--ink); text-decoration: none; }
+  :root[data-theme] .qa-item-title a:hover { color: var(--accent); text-decoration: underline; }
+  :root[data-theme] .qa-item-details { overflow-wrap: anywhere; }
+
+  :root[data-theme] .qa-item-meta { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
+  :root[data-theme] .qa-item-when { min-width: 150px; font-size: 12.5px; color: var(--ink-3); text-align: right; }
+  :root[data-theme] .qa-item-actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+
+  :root[data-theme] .qa-more { display: block; margin: 4px 0 2px 26px; }
+
+  :root[data-theme] .qa-untracked { display: flex; align-items: flex-start; gap: 7px; margin-top: 4px; }
+  :root[data-theme] .qa-untracked svg { flex: none; margin-top: 2px; }
+
+  /* ---------- Records opened from Quick Actions ---------- */
+
+  :root[data-theme] [data-focused] {
+    outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    outline-offset: -2px;
+    border-radius: var(--radius-sm);
+    background: var(--mint);
+  }
+
+  :root[data-theme] .qa-roster-state { display: block; margin-top: 4px; }
+
+  /* ---------- Smaller screens ---------- */
+
+  @media (max-width: 1180px) {
+    :root[data-theme] .qa-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    :root[data-theme] .qa-item { grid-template-columns: minmax(0, 1fr) auto; }
+    :root[data-theme] .qa-item-meta { grid-row: 2; grid-column: 1 / -1; justify-content: flex-start; }
+    :root[data-theme] .qa-item-actions { grid-row: 1; grid-column: 2; }
+    :root[data-theme] .qa-item-when { min-width: 0; text-align: left; }
+  }
+
+  @media (max-width: 720px) {
+    :root[data-theme] .qa-grid { gap: 10px; }
+    :root[data-theme] .qa-card { padding: 11px 12px; }
+    :root[data-theme] .qa-group-head { padding: 10px 15px 6px; }
+    :root[data-theme] .qa-item { padding: 9px 15px 9px 24px; }
+    :root[data-theme] .qa-item::before { left: 12px; }
+    :root[data-theme] .qa-more { margin-left: 24px; }
+    :root[data-theme] .qa-toolbar .segmented { width: 100%; }
+    :root[data-theme] .qa-toolbar .segmented button { flex: 1; padding-inline: 4px; }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "folio-hotel-cms",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Folio – hotel management suite. Interactive sales demonstration with fictional data.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "build:model": "node scripts/build-hotel-model.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/hanken-grotesk": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@react-three/fiber": "^8.18.0",
+    "gsap": "^3.13.0",
+    "lucide-react": "^1.68.0",
+    "qrcode-generator": "^2.0.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.18.5",
+    "recharts": "^2.15.4",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/extensions": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@types/three": "^0.170.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "jsqr": "^1.4.0",
+    "meshoptimizer": "^0.22.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.5"
+  }
+}
