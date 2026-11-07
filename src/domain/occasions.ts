@@ -4,7 +4,6 @@ import type { Guest, GuestOccasion, ID, ISODate, OccasionType, Reservation } fro
 export const OCCASION_LABEL: Record<OccasionType, string> = {
   birthday: 'Birthday',
   anniversary: 'Anniversary',
-  honeymoon: 'Honeymoon',
   celebration: 'Special celebration',
   family_vacation: 'Family vacation',
   business_trip: 'Business trip',
@@ -15,7 +14,6 @@ export const OCCASION_LABEL: Record<OccasionType, string> = {
 export const OCCASION_PLURAL: Record<OccasionType, string> = {
   birthday: 'Birthdays',
   anniversary: 'Anniversaries',
-  honeymoon: 'Honeymoon',
   celebration: 'Special celebrations',
   family_vacation: 'Family vacations',
   business_trip: 'Business trips',
@@ -26,12 +24,11 @@ export const OCCASION_PLURAL: Record<OccasionType, string> = {
  * The categories Guest Occasions reports on. A business trip can be recorded on a booking but is not
  * a celebration, so it is kept on the profile and left out of these counts.
  */
-export const OCCASION_CATEGORIES: OccasionType[] = ['birthday', 'anniversary', 'honeymoon', 'celebration', 'family_vacation', 'other'];
+export const OCCASION_CATEGORIES: OccasionType[] = ['birthday', 'anniversary', 'celebration', 'family_vacation', 'other'];
 
 export const OCCASION_ICON: Record<OccasionType, IconName> = {
   birthday: 'cake',
   anniversary: 'gem',
-  honeymoon: 'heart',
   celebration: 'party',
   family_vacation: 'users',
   business_trip: 'building',
@@ -44,7 +41,6 @@ export type OccasionChoice = '' | OccasionType | 'none';
 export const OCCASION_CHOICES: { value: OccasionChoice; label: string }[] = [
   { value: 'birthday', label: 'Birthday' },
   { value: 'anniversary', label: 'Anniversary' },
-  { value: 'honeymoon', label: 'Honeymoon' },
   { value: 'family_vacation', label: 'Family Vacation' },
   { value: 'business_trip', label: 'Business Trip' },
   { value: 'celebration', label: 'Special Celebration' },

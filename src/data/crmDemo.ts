@@ -349,7 +349,6 @@ export function buildCrmDemo({ now, hotel, guests, reservations, categories }: I
 const OCCASION_PLAN: { type: OccasionType; weight: number; notes: string[] }[] = [
   { type: 'birthday', weight: 10, notes: ['Would like a cake in the room.', 'Surprise for the family at dinner.', ''] },
   { type: 'anniversary', weight: 6, notes: ['Flowers and a quiet table, please.', 'Twenty-fifth. Champagne on arrival if possible.', ''] },
-  { type: 'honeymoon', weight: 3, notes: ['Newly married. Late check-out if we can.', 'Rose petals welcome, no strong scents.'] },
   { type: 'celebration', weight: 4, notes: ['Promotion party for the team.', 'Graduation weekend with family.', ''] },
   { type: 'family_vacation', weight: 5, notes: ['Two children, cots needed.', 'Grandparents travelling with us.', ''] },
   { type: 'other', weight: 2, notes: ['Reunion with college friends.', ''] },

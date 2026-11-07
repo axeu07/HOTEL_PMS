@@ -110,7 +110,6 @@
   :root[data-theme] .occasion-chip > svg:first-child { width: 26px; height: 26px; padding: 6px; }
   :root[data-theme] .occasion-chip[data-occasion='birthday'], :root[data-theme] .occasion-item[data-occasion='birthday'] { --oc: var(--coral-deep); }
   :root[data-theme] .occasion-chip[data-occasion='anniversary'], :root[data-theme] .occasion-item[data-occasion='anniversary'] { --oc: var(--brass); }
-  :root[data-theme] .occasion-chip[data-occasion='honeymoon'], :root[data-theme] .occasion-item[data-occasion='honeymoon'] { --oc: #b0577a; }
   :root[data-theme] .occasion-chip[data-occasion='celebration'], :root[data-theme] .occasion-item[data-occasion='celebration'] { --oc: #7e62ba; }
   :root[data-theme] .occasion-chip[data-occasion='family_vacation'], :root[data-theme] .occasion-item[data-occasion='family_vacation'] { --oc: var(--info); }
   :root[data-theme] .occasion-chip[data-occasion='business_trip'], :root[data-theme] .occasion-item[data-occasion='business_trip'] { --oc: var(--ink-3); }

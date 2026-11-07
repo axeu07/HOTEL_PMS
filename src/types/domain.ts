@@ -186,7 +186,7 @@ export interface Reservation extends Entity {
 
 /* ---------- Guest occasions ---------- */
 
-export type OccasionType = 'birthday' | 'anniversary' | 'honeymoon' | 'celebration' | 'family_vacation' | 'business_trip' | 'other';
+export type OccasionType = 'birthday' | 'anniversary' | 'celebration' | 'family_vacation' | 'business_trip' | 'other';
 export type OccasionSource = 'booking' | 'check_in' | 'profile';
 
 /**
