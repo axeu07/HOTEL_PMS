@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuth } from '@/app/providers';
 import { EmailLogo, WhatsAppLogo } from '@/components/brandIcons';
 import { Icon } from '@/components/icons';
@@ -42,7 +42,10 @@ function TemplateEditor({ template, channel, onClose }: { template?: MessageTemp
     }
   };
 
-  const preview = { subject: renderTemplate(draft.subject, SAMPLE), body: renderTemplate(draft.body, SAMPLE) };
+  const preview = useMemo(
+    () => ({ subject: renderTemplate(draft.subject, SAMPLE), body: renderTemplate(draft.body, SAMPLE) }),
+    [draft.subject, draft.body],
+  );
 
   return (
     <Modal

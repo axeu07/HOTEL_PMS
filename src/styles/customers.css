@@ -69,7 +69,31 @@
 
   /* ---------- Loyalty tiers ---------- */
 
-  :root[data-theme] .tier-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+  :root[data-theme] .stayed-kpis .stat-grid { gap: 10px; margin-bottom: 12px; }
+  :root[data-theme] .stayed-kpis .stat-card { padding: 11px 14px; gap: 6px; border-radius: 16px; }
+  :root[data-theme] .stat-card.is-button { display: grid; width: 100%; text-align: left; font: inherit; color: inherit; background: var(--surface); cursor: pointer; }
+  :root[data-theme] .stat-card.is-button[aria-pressed='true'] { border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 22%, transparent); }
+  :root[data-theme] .stayed-kpis .stat-icon { width: 30px; height: 30px; border-radius: 10px; }
+  :root[data-theme] .stayed-kpis .stat-top { gap: 9px; font-size: 13px; }
+  :root[data-theme] .stayed-kpis .ledger-value { font-size: 26px; line-height: 1.1; }
+  :root[data-theme] .stayed-kpis .ledger-note { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  :root[data-theme] .tier-strip { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 12px; margin-bottom: 16px; }
+  :root[data-theme] .tier-dist { display: flex; align-items: center; gap: 18px; padding: 8px 14px; margin-bottom: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+  :root[data-theme] .tier-dist-title { flex: none; font-size: 12px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+  :root[data-theme] .tier-dist-row { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  :root[data-theme] .tier-dist-item {
+    display: flex; align-items: baseline; gap: 8px; text-align: left; padding: 5px 10px; border: 0; border-left: 3px solid var(--tier, var(--accent));
+    border-radius: 6px; background: transparent; font: inherit; color: var(--ink); cursor: pointer; min-width: 0;
+    transition: background var(--fast) ease, box-shadow var(--fast) ease;
+  }
+  :root[data-theme] .tier-dist-item .tier-count { font-size: 20px; line-height: 1.1; }
+  :root[data-theme] .tier-dist-item .tier-rule { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  :root[data-theme] .tier-dist-item[data-tier='new'] { --tier: var(--sage, #a8cdb3); }
+  :root[data-theme] .tier-dist-item[data-tier='returning'] { --tier: #5a9a86; }
+  :root[data-theme] .tier-dist-item[data-tier='regular'] { --tier: var(--accent); }
+  :root[data-theme] .tier-dist-item:hover { background: var(--surface-3); }
+  :root[data-theme] .tier-dist-item[aria-pressed='true'] { background: color-mix(in srgb, var(--tier) 14%, transparent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--tier) 30%, transparent); }
+  :root[data-theme] .tier-label { font-size: 12px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
   :root[data-theme] .tier-card {
     display: grid; gap: 2px; justify-items: start; text-align: left; padding: 14px 16px; border: 1.5px solid var(--line);
     border-radius: 18px; background: var(--surface); font: inherit; color: var(--ink); cursor: pointer; position: relative; overflow: hidden;
@@ -207,7 +231,8 @@
   @media (max-width: 960px) {
     :root[data-theme] .contact-grid,
     :root[data-theme] .lead-grid { grid-template-columns: minmax(0, 1fr); }
-    :root[data-theme] .tier-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    :root[data-theme] .tier-dist { flex-direction: column; align-items: stretch; gap: 6px; }
+    :root[data-theme] .tier-dist-row { grid-template-columns: minmax(0, 1fr); }
   }
 
   @media (max-width: 560px) {

@@ -534,7 +534,12 @@ export function StatCard({
   meter,
   meterTone,
   art,
+  onClick,
+  active,
 }: {
+  /** Makes the card a toggle button instead of a link. */
+  onClick?: () => void;
+  active?: boolean;
   label: string;
   value: ReactNode;
   note?: ReactNode;
@@ -578,6 +583,9 @@ export function StatCard({
       )}
     </>
   );
+  if (onClick) {
+    return <button type="button" className="stat-card is-link is-button" data-tone={tone} aria-pressed={active} onClick={onClick}>{body}</button>;
+  }
   return to
     ? <Link className="stat-card is-link" data-tone={tone} to={to}>{body}</Link>
     : <div className="stat-card" data-tone={tone}>{body}</div>;

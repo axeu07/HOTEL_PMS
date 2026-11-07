@@ -367,8 +367,14 @@
 
   :root[data-theme] .modal-root {
     background: var(--overlay);
-    backdrop-filter: blur(4px);
+    /* No backdrop blur: it re-blurs the whole page on every keystroke/repaint behind the dialog. */
   }
+
+  :root[data-theme] .modal { will-change: transform, opacity; contain: layout paint; }
+  :root[data-theme] .modal-body { overscroll-behavior: contain; }
+
+  /* Freeze the page's looping animations (mascot, glows) while a dialog is open. */
+  :root[data-theme] body:has(.modal-root) :is(.mascot *, .fa-fab, .fa-fab::before, .skeleton) { animation-play-state: paused !important; }
 
   /* ---------- Tables ---------- */
 

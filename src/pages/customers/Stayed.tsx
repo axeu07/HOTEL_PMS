@@ -202,21 +202,24 @@ export default function Stayed() {
         title="Stayed guests"
         subtitle={`${crm.stayed.length} guests have stayed with us. Bring them back with a personal offer.`}
       />
-      <StatGrid>
+      <div className="stayed-kpis"><StatGrid>
         <StatCard icon="users" label="Guests who stayed" value={crm.stayed.length} note="At least one completed stay" />
         <StatCard icon="refresh" tone="info" label="Returning guests" value={repeat} note={`${crm.stayed.length ? Math.round((repeat / crm.stayed.length) * 100) : 0}% have stayed more than once`} />
-        <StatCard icon="star" tone="gold" label="VIP guests" value={tierCounts.vip} note="Top tier" />
         <StatCard icon="coins" tone="good" label="Lifetime spend" value={moneyCompact(totalSpend)} note="Billed to guests who stayed" />
-      </StatGrid>
+        <StatCard icon="star" tone="gold" label="VIP guests" value={tierCounts.vip} note={LOYALTY_LABEL.vip.rule} active={tier === 'vip'} onClick={() => setTier(tier === 'vip' ? '' : 'vip')} />
+      </StatGrid></div>
 
-      <section className="tier-strip" aria-label="Loyalty tiers">
-        {LOYALTY_ORDER.map((t) => (
-          <button key={t} type="button" className="tier-card" data-tier={t} aria-pressed={tier === t} onClick={() => setTier(tier === t ? '' : t)}>
-            <span className="tier-name">{LOYALTY_LABEL[t].label}</span>
-            <span className="tier-count">{tierCounts[t]}</span>
-            <span className="tier-rule">{LOYALTY_LABEL[t].rule}</span>
-          </button>
-        ))}
+      <section className="tier-dist" aria-label="Guest loyalty distribution">
+        <span className="tier-dist-title">Guest loyalty distribution</span>
+        <div className="tier-dist-row">
+          {LOYALTY_ORDER.filter((t) => t !== 'vip').map((t) => (
+            <button key={t} type="button" className="tier-dist-item" data-tier={t} aria-pressed={tier === t} onClick={() => setTier(tier === t ? '' : t)}>
+              <span className="tier-label">{LOYALTY_LABEL[t].label}</span>
+              <span className="tier-count">{tierCounts[t]}</span>
+              <span className="tier-rule">{LOYALTY_LABEL[t].rule}</span>
+            </button>
+          ))}
+        </div>
       </section>
 
       <Panel>

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { memo, useDeferredValue, useRef } from 'react';
 import { Field } from '@/components/ui';
 import { TEMPLATE_VARIABLES, unknownVariables } from '@/domain/templates';
 import type { MessageChannel } from '@/types/domain';
@@ -59,7 +59,10 @@ export function MessageEditor({
 }
 
 /** How a message will look to the guest: a chat bubble for WhatsApp, a letter for email. */
-export function MessagePreview({ channel, subject, body, to }: { channel: MessageChannel; subject: string; body: string; to?: string }) {
+export const MessagePreview = memo(function MessagePreview({ channel, subject: subjectNow, body: bodyNow, to }: { channel: MessageChannel; subject: string; body: string; to?: string }) {
+  // Deferred so typing in the editor stays instant; the preview catches up a moment later.
+  const subject = useDeferredValue(subjectNow);
+  const body = useDeferredValue(bodyNow);
   const leftover = [...new Set([...`${subject}\n${body}`.matchAll(/\{([a-z_]+)\}/g)].map((m) => m[0]))];
   return (
     <div className="stack-sm">
@@ -81,4 +84,4 @@ export function MessagePreview({ channel, subject, body, to }: { channel: Messag
       )}
     </div>
   );
-}
+});

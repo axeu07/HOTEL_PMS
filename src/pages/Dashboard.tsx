@@ -5,7 +5,7 @@ import { useApp, useAuth } from '@/app/providers';
 import { Bars, SERIES, TrendArea } from '@/components/charts';
 import { KpiPanelArt, type KpiArtKind } from '@/components/decor';
 import { Icon, type IconName } from '@/components/icons';
-import { Badge, Button, DataTable, EmptyState, Meter, PageHead, PageLoading, Panel, PersonCell, StatCard, StatGrid, useFeedback, type Column } from '@/components/ui';
+import { Badge, Button, DataTable, EmptyState, Meter, PageHead, PageLoading, Panel, PersonCell, StatCard, StatGrid, Tabs, useFeedback, type Column } from '@/components/ui';
 import { LeadDashboard } from '@/features/crm/LeadDashboard';
 import { QuickActionCards } from '@/features/QuickActionCards';
 import { RoomBoard } from '@/features/rooms';
@@ -294,25 +294,18 @@ function HousekeepingDashboard({ lookups }: { lookups: Lookups }) {
 
 /* ---------- Page ---------- */
 
-function OperationsHeading({ children }: { children: ReactNode }) {
-  return (
-    <div className="section-title">
-      <h2>{children}</h2>
-      <p>The rest of the hotel, as it stands today.</p>
-    </div>
-  );
-}
-
 export default function Dashboard() {
   const { user, role, can } = useAuth();
   const { hotel } = useApp();
   const lookups = useLookups();
+  const [view, setView] = useState<'leads' | 'sales'>('leads');
   if (!lookups || !role) return <PageLoading />;
 
   const firstName = user?.name.split(' ')[0];
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   const sales = can('customers.view');
+  const showTabs = sales && role.id !== 'housekeeping';
 
   return (
     <>
@@ -330,14 +323,20 @@ export default function Dashboard() {
           )
         }
       />
-      {sales && <LeadDashboard />}
-      {role.id === 'housekeeping' ? (
-        <HousekeepingDashboard lookups={lookups} />
-      ) : (
-        <>
-          {sales && <OperationsHeading>Hotel operations</OperationsHeading>}
-          {role.id === 'reception' ? <DeskDashboard lookups={lookups} /> : <OwnerDashboard lookups={lookups} />}
-        </>
+      {showTabs && (
+        <div style={{ marginBottom: 20 }}>
+          <Tabs tabs={[{ id: 'leads', label: 'Leads' }, { id: 'sales', label: 'Sales' }]} value={view} onChange={setView} />
+        </div>
+      )}
+      {showTabs && view === 'leads' && <LeadDashboard />}
+      {(!showTabs || view === 'sales') && (
+        role.id === 'housekeeping' ? (
+          <HousekeepingDashboard lookups={lookups} />
+        ) : role.id === 'reception' ? (
+          <DeskDashboard lookups={lookups} />
+        ) : (
+          <OwnerDashboard lookups={lookups} />
+        )
       )}
       <p className="small muted" style={{ marginTop: 18 }}>Sample data as of {fmtDate(today())}. All figures and leads are fictional; no Meta, booking-platform or messaging account is connected.</p>
     </>
