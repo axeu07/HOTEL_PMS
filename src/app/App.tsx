@@ -23,6 +23,7 @@ const loadReports = () => import('@/pages/Reports');
 const loadSettings = () => import('@/pages/Settings');
 const loadStayed = () => import('@/pages/customers/Stayed');
 const loadLeads = () => import('@/pages/customers/Leads');
+const loadOccasions = () => import('@/pages/customers/Occasions');
 const loadTemplates = () => import('@/pages/customers/Templates');
 const loadAiOverview = () => import('@/pages/ai/Overview');
 const loadAiSmartPricing = () => import('@/pages/ai/SmartPricing');
@@ -47,6 +48,7 @@ const Reports = lazy(loadReports);
 const Settings = lazy(loadSettings);
 const Stayed = lazy(loadStayed);
 const Leads = lazy(loadLeads);
+const Occasions = lazy(loadOccasions);
 const Templates = lazy(loadTemplates);
 const BookingLink = lazy(() => import('@/pages/public/BookingLink'));
 const AiOverview = lazy(loadAiOverview);
@@ -58,7 +60,7 @@ const AiReviewIntelligence = lazy(loadAiReviewIntelligence);
 const AiStaffPlanner = lazy(loadAiStaffPlanner);
 const AiRevenueInsights = lazy(loadAiRevenueInsights);
 
-const APP_PAGES = [loadDashboard, loadQuickActions, loadFrontDesk, loadReservations, loadRooms, loadGuests, loadHousekeeping, loadRestaurant, loadBilling, loadStaff, loadReports, loadSettings, loadStayed, loadLeads, loadTemplates, loadAiOverview, loadAiSmartPricing, loadAiGuestTiming, loadAiGuestInsights, loadAiOccupancyForecast, loadAiReviewIntelligence, loadAiStaffPlanner, loadAiRevenueInsights];
+const APP_PAGES = [loadDashboard, loadQuickActions, loadFrontDesk, loadReservations, loadRooms, loadGuests, loadHousekeeping, loadRestaurant, loadBilling, loadStaff, loadReports, loadSettings, loadStayed, loadLeads, loadOccasions, loadTemplates, loadAiOverview, loadAiSmartPricing, loadAiGuestTiming, loadAiGuestInsights, loadAiOccupancyForecast, loadAiReviewIntelligence, loadAiStaffPlanner, loadAiRevenueInsights];
 
 /** Fetches every screen shortly after sign-in, so moving between pages never shows a loader. */
 function usePreloadPages() {
@@ -137,6 +139,7 @@ export function App() {
                 <Route path="customers" element={<Navigate to="stayed" replace />} />
                 <Route path="customers/stayed" element={<Guard permission="customers.view"><Stayed /></Guard>} />
                 <Route path="customers/leads" element={<Guard permission="customers.view"><Leads /></Guard>} />
+                <Route path="customers/occasions" element={<Guard permission="customers.view"><Occasions /></Guard>} />
                 <Route path="customers/templates" element={<Guard permission="customers.view"><Templates /></Guard>} />
                 <Route path="front-desk" element={<Guard permission="frontdesk.use"><FrontDesk /></Guard>} />
                 <Route path="reservations" element={<Guard permission="reservations.view"><Reservations /></Guard>} />

@@ -7,6 +7,8 @@ import { repositories } from '@/repositories';
 import type { BookingSource, ID, InvoiceTotals, PaymentMethod, Reservation } from '@/types/domain';
 import { billingService } from './billing';
 import { activityService, newId } from './core';
+import { occasionService } from './occasions';
+import type { OccasionDraft } from '@/domain/occasions';
 import { guestName, guestService, type GuestInput } from './guests';
 
 export interface ReservationInput {
@@ -283,6 +285,7 @@ export const reservationService = {
     adults: number;
     children: number;
     notes: string;
+    occasion?: OccasionDraft;
   }): Promise<Reservation> {
     const category = await repositories.roomCategories.get(input.categoryId);
     if (!category) throw new DomainError('Choose a room type.');
@@ -299,7 +302,7 @@ export const reservationService = {
       vip: false,
       preferences: { floor: 'no_preference', bed: 'no_preference', pillow: 'no_preference', dietary: 'none', notes: '' },
     });
-    return reservationService.create({
+    const reservation = await reservationService.create({
       guestId: guest.id,
       categoryId: input.categoryId,
       roomId: null,
@@ -312,5 +315,7 @@ export const reservationService = {
       notes: input.notes,
       status: 'pending',
     });
+    if (input.occasion) await occasionService.saveForStay({ reservationId: reservation.id, guestId: guest.id }, input.occasion, { source: 'booking' });
+    return reservation;
   },
 };

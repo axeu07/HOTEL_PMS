@@ -4,6 +4,7 @@ import { money } from '@/lib/format';
 import type {
   CommunicationLog,
   Guest,
+  GuestOccasion,
   Hotel,
   Lead,
   LeadActivity,
@@ -11,6 +12,7 @@ import type {
   LeadSource,
   LeadStatus,
   MessageTemplate,
+  OccasionType,
   Reservation,
   RoomCategory,
 } from '@/types/domain';
@@ -340,4 +342,77 @@ export function buildCrmDemo({ now, hotel, guests, reservations, categories }: I
   });
 
   return { leads, communications: communications.sort((a, b) => a.at.localeCompare(b.at)) };
+}
+
+/* ---------- Guest occasions ---------- */
+
+const OCCASION_PLAN: { type: OccasionType; weight: number; notes: string[] }[] = [
+  { type: 'birthday', weight: 10, notes: ['Would like a cake in the room.', 'Surprise for the family at dinner.', ''] },
+  { type: 'anniversary', weight: 6, notes: ['Flowers and a quiet table, please.', 'Twenty-fifth. Champagne on arrival if possible.', ''] },
+  { type: 'honeymoon', weight: 3, notes: ['Newly married. Late check-out if we can.', 'Rose petals welcome, no strong scents.'] },
+  { type: 'celebration', weight: 4, notes: ['Promotion party for the team.', 'Graduation weekend with family.', ''] },
+  { type: 'family_vacation', weight: 5, notes: ['Two children, cots needed.', 'Grandparents travelling with us.', ''] },
+  { type: 'other', weight: 2, notes: ['Reunion with college friends.', ''] },
+];
+
+/**
+ * Sample occasions raised at booking or check-in. A fifth of the live bookings carry one, plus one
+ * guest's profile-only entry, so every state of the Guest Occasions row has something to show.
+ */
+export function buildOccasionsDemo({ now, guests, reservations }: { now: string; guests: Guest[]; reservations: Reservation[] }): GuestOccasion[] {
+  const rand = rng(90417);
+  const guestById = new Map(guests.map((g) => [g.id, g]));
+  const total = OCCASION_PLAN.reduce((s, p) => s + p.weight, 0);
+  const out: GuestOccasion[] = [];
+  const seen = new Set<string>();
+  const sorted = [...reservations]
+    .filter((r) => !['cancelled', 'no_show'].includes(r.status))
+    .sort((a, b) => a.code.localeCompare(b.code));
+
+  sorted.forEach((r, i) => {
+    if (i % 5 !== 2) return;
+    let roll = rand.next() * total;
+    const plan = OCCASION_PLAN.find((p) => (roll -= p.weight) < 0) ?? OCCASION_PLAN[0];
+    const guest = guestById.get(r.guestId);
+    if (!guest) return;
+    const key = `${r.id}:${plan.type}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    const nights = Math.max(1, nightsBetween(r.checkIn, r.checkOut));
+    const dated = plan.type !== 'family_vacation' || rand.chance(0.3);
+    const raisedAtCheckIn = r.status === 'checked_in' || r.status === 'checked_out' ? rand.chance(0.4) : false;
+    const created = (raisedAtCheckIn ? r.checkIn : r.createdAt.slice(0, 10)) + 'T09:00:00.000Z';
+    out.push({
+      id: `occ-${out.length + 1}`,
+      guestId: r.guestId,
+      reservationId: r.id,
+      type: plan.type,
+      date: dated ? addDays(r.checkIn, rand.int(0, nights - 1)) : '',
+      celebrant: plan.type === 'birthday' || plan.type === 'anniversary' ? (rand.chance(0.5) ? guest.firstName : rand.pick(FIRST_NAMES)) : '',
+      notes: rand.pick(plan.notes),
+      source: raisedAtCheckIn ? 'check_in' : 'booking',
+      createdAt: created,
+      updatedAt: created,
+      verifiedAt: raisedAtCheckIn ? created : null,
+    });
+  });
+
+  // A profile-only entry for a guest with no booking attached, to show that case too.
+  const solo = guests.find((g) => !out.some((o) => o.guestId === g.id) && !g.id.startsWith('guest-demo'));
+  if (solo) {
+    out.push({
+      id: `occ-${out.length + 1}`,
+      guestId: solo.id,
+      reservationId: null,
+      type: 'anniversary',
+      date: addDays(now, 12),
+      celebrant: 'Our 10th',
+      notes: 'Mentioned on a call; planning to book a weekend.',
+      source: 'profile',
+      createdAt: `${addDays(now, -3)}T11:00:00.000Z`,
+      updatedAt: `${addDays(now, -3)}T11:00:00.000Z`,
+      verifiedAt: null,
+    });
+  }
+  return out;
 }

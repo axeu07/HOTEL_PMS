@@ -52,6 +52,8 @@ export const guestService = {
     if (reservations.some((r) => r.guestId === id)) {
       throw new DomainError('This guest has booking history, which must be kept with their invoices.');
     }
+    const occasions = await repositories.occasions.list();
+    await Promise.all(occasions.filter((o) => o.guestId === id).map((o) => repositories.occasions.remove(o.id)));
     await repositories.guests.remove(id);
   },
 

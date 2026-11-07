@@ -60,6 +60,10 @@ import {
   Sun,
   Tag,
   Trash2,
+  Heart,
+  PartyPopper,
+  Gem,
+  Sparkle,
   TrendingDown,
   TrendingUp,
   TriangleAlert,
@@ -187,6 +191,10 @@ const ICONS = {
   userPlus: UserPlus,
   external: ExternalLink,
   cake: Cake,
+  heart: Heart,
+  party: PartyPopper,
+  gem: Gem,
+  sparkle: Sparkle,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

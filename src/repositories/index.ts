@@ -27,6 +27,7 @@ export const repositories = {
   leads: createRepository('leads'),
   messageTemplates: createRepository('messageTemplates'),
   communications: createRepository('communications'),
+  occasions: createRepository('occasions'),
 };
 
 export type { Repository } from './types';

@@ -184,6 +184,33 @@ export interface Reservation extends Entity {
   checkedOutAt: ISODateTime | null;
 }
 
+/* ---------- Guest occasions ---------- */
+
+export type OccasionType = 'birthday' | 'anniversary' | 'honeymoon' | 'celebration' | 'family_vacation' | 'business_trip' | 'other';
+export type OccasionSource = 'booking' | 'check_in' | 'profile';
+
+/**
+ * Something a guest is marking during a stay. It lives on the guest, so it shows on their profile
+ * and in Guest Loyalty, and points at the booking it came from. It is not the guest's own birthday
+ * (`Guest.birthday`): a "birthday" occasion can be someone else's, and only counts for that stay.
+ */
+export interface GuestOccasion extends Entity {
+  guestId: ID;
+  /** The stay it was raised for. Null when staff add one straight to the profile. */
+  reservationId: ID | null;
+  type: OccasionType;
+  /** The day it is celebrated. Empty when the guest did not say; the stay's arrival date stands in. */
+  date: ISODate | '';
+  /** Whose birthday or anniversary it is. */
+  celebrant: string;
+  notes: string;
+  source: OccasionSource;
+  createdAt: ISODateTime;
+  updatedAt: ISODateTime;
+  /** Set when the desk confirmed or corrected it at check-in. */
+  verifiedAt: ISODateTime | null;
+}
+
 /* ---------- Billing ---------- */
 
 export type ChargeKind = 'room' | 'food' | 'service';
@@ -493,4 +520,5 @@ export interface DemoDatabase {
   leads: Lead[];
   messageTemplates: MessageTemplate[];
   communications: CommunicationLog[];
+  occasions: GuestOccasion[];
 }

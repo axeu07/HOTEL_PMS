@@ -10,3 +10,4 @@ export { reservationService, type DepartureBill, type ReservationInput } from '.
 export { roomService } from './rooms';
 export { publicReviewService, RATE_LIMIT, reviewService, type PublicHotel, type ReviewSubmission } from './reviews';
 export { communicationService, emptyLead, leadService, publicLeadService, templateService, type LeadInput, type PublicOffer, type TemplateInput } from './crm';
+export { occasionService, type OccasionInput } from './occasions';

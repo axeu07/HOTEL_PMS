@@ -10,6 +10,7 @@ import { LOYALTY_LABEL, LOYALTY_ORDER, LOYALTY_RULES, type LoyaltyTier } from '@
 import { ContactModal } from '@/features/crm/ContactModal';
 import { OutreachButtons } from '@/features/crm/OutreachButtons';
 import { guestRecipient } from '@/features/crm/recipients';
+import { ProfileOccasions } from '@/features/crm/GuestOccasions';
 import { useCrm, type Crm } from '@/features/crm/useCrm';
 import { addDays } from '@/lib/dates';
 import { fmtDate, fmtDayMonth, money, moneyCompact, timeAgo } from '@/lib/format';
@@ -85,6 +86,8 @@ function GuestProfile({ row, crm, onClose, onContact }: { row: StayedGuest; crm:
           <OutreachButtons name={guestName(guest)} size="md" onPick={(c) => onContact(row, c)} />
           <span className="small muted">{tier.label} guest: {tier.rule}.</span>
         </div>
+
+        <ProfileOccasions guestId={guest.id} crm={crm} canEdit={can('customers.manage')} />
 
         <div className="grid-1-1">
           <div>

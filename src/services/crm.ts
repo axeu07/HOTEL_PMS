@@ -1,4 +1,6 @@
 import { buildTemplates } from '@/data/crmDemo';
+import { occasionService } from './occasions';
+import type { OccasionDraft } from '@/domain/occasions';
 import { isOpenLead } from '@/domain/leads';
 import { TEMPLATE_SEEDS, unknownVariables } from '@/domain/templates';
 import { today } from '@/lib/dates';
@@ -260,7 +262,7 @@ export const publicLeadService = {
     };
   },
 
-  async book(token: string, input: { categoryId: ID; checkIn: string; checkOut: string; adults: number; notes: string }): Promise<{ code: string }> {
+  async book(token: string, input: { categoryId: ID; checkIn: string; checkOut: string; adults: number; notes: string; occasion?: OccasionDraft }): Promise<{ code: string }> {
     const lead = await leadByToken(token);
     if (!lead) throw new DomainError('This booking link is not valid. Please ask the hotel for a new one.');
     if (lead.reservationId) {
@@ -292,6 +294,7 @@ export const publicLeadService = {
       notes: input.notes.trim().slice(0, 500),
       status: 'pending',
     });
+    if (input.occasion) await occasionService.saveForStay({ reservationId: reservation.id, guestId: guest.id }, input.occasion, { source: 'booking' });
     const fresh = await getLead(lead.id);
     await repositories.leads.update(lead.id, {
       status: 'converted',

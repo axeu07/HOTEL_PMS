@@ -44,6 +44,7 @@ search and the account menu reach them.
 - **Messages are not sent from the app.** WhatsApp or the mail app opens with the text written; history records "prepared".
 - **Booking links** (`/book/<token>`) are per lead. Booking through one creates a pending reservation (source "Lead booking link") and marks the lead Converted; the desk can also convert a lead with Create booking.
 - **Loyalty** is derived, never stored (`src/domain/loyalty.ts`): New 1 stay, Returning 2-3, Regular 4-6, VIP 7+ stays, 350,000+ billed, or a VIP flag.
+- **Guest occasions** are stored per guest (`occasions` collection, `src/services/occasions.ts`), linked to the booking they came from, and filled in at booking, check-in or on the profile. Booking and check-in update the same record, so nothing is duplicated. They are separate from `Guest.birthday`. Business trips are kept on the profile but not counted in the Guest Occasions row.
 - Templates use placeholders such as `{guest_name}` and `{booking_link}` (`src/domain/templates.ts`).
 
 ## Quick Actions

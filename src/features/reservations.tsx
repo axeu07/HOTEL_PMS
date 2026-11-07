@@ -6,6 +6,8 @@ import { Badge, Button, ComboboxField, Modal, SelectField, TextAreaField, TextFi
 import { freeRooms as findFreeRooms } from '@/domain/availability';
 import { computeRoomTaxRate } from '@/domain/billing';
 import { useResource } from '@/hooks/useResource';
+import { draftFromOccasion, emptyOccasionDraft, validateOccasionDraft, type OccasionDraft } from '@/domain/occasions';
+import { OccasionFields } from './occasions';
 import { GuestLookupFields, emptyWalkInDraft, type WalkInGuestDraft } from './guestLookup';
 import { addDays, nightsBetween, today } from '@/lib/dates';
 import { fmtDate, money, round2 } from '@/lib/format';
@@ -15,6 +17,7 @@ import {
   emptyGuest,
   guestName,
   guestService,
+  occasionService,
   reservationService,
   roomService,
   type DepartureBill,
@@ -104,6 +107,15 @@ export function ReservationFormModal({
     status: (reservation?.status === 'pending' ? 'pending' : 'confirmed') as 'pending' | 'confirmed',
     notes: reservation?.notes ?? '',
   });
+  const [occasion, setOccasion] = useState<OccasionDraft>(emptyOccasionDraft());
+  const [occasionLoaded, setOccasionLoaded] = useState(!reservation);
+  // Editing a booking shows the occasion already on it.
+  useEffect(() => {
+    if (!reservation) return;
+    let live = true;
+    occasionService.forReservation(reservation.id).then((o) => { if (live) { setOccasion(draftFromOccasion(o)); setOccasionLoaded(true); } });
+    return () => { live = false; };
+  }, [reservation]);
   const [guestMode, setGuestMode] = useState<'existing' | 'new'>(walkIn && !defaults?.guestId ? 'new' : 'existing');
   const [draft, setDraft] = useState<WalkInGuestDraft>(() => emptyWalkInDraft(initialPhone ?? ''));
   const [match, setMatch] = useState<GuestMatch | null>(null);
@@ -157,6 +169,7 @@ export function ReservationFormModal({
       adults: Number(form.adults) < 1 ? 'At least one adult' : '',
       guests: category && Number(form.adults) + Number(form.children) > category.capacity ? `${category.name} sleeps up to ${category.capacity}` : '',
       roomId: walkIn && !form.roomId ? 'Choose a room for the walk-in' : '',
+      occasion: validateOccasionDraft(occasion),
     };
     if (guestMode === 'existing') {
       next.guestId = required(form.guestId, 'Guest');
@@ -195,6 +208,7 @@ export function ReservationFormModal({
           ratePerNight: Number(form.ratePerNight),
           notes: form.notes,
         });
+        await occasionService.saveForStay({ reservationId: saved.id, guestId: saved.guestId }, occasion, { source: 'booking' });
         toast(`Walk-in checked in to room ${lookups.roomById.get(form.roomId)?.number}`);
       } else {
         const guestId = guestMode === 'existing' ? form.guestId : (await guestService.create(guestFromDraft(draft))).id;
@@ -212,6 +226,7 @@ export function ReservationFormModal({
           status: form.status,
         };
         saved = editing ? await reservationService.update(reservation.id, input) : await reservationService.create(input);
+        if (!editing || occasionLoaded) await occasionService.saveForStay({ reservationId: saved.id, guestId: saved.guestId }, occasion, { source: 'booking' });
         toast(editing ? `Booking ${saved.code} updated` : `Booking ${saved.code} created`);
       }
       onSaved?.(saved);
@@ -306,6 +321,8 @@ export function ReservationFormModal({
             <option value="pending">Pending</option>
           </SelectField>
         )}
+        <span className="form-section">Occasion</span>
+        <OccasionFields draft={occasion} onChange={setOccasion} error={errors.occasion} idPrefix="booking-occasion" />
         <TextAreaField label="Notes" wrapClass="full" value={form.notes} onChange={(e) => set('notes', e.target.value)} />
         {failure && <div className="alert alert-bad full"><Icon name="alert" /><span>{failure}</span></div>}
       </form>
@@ -324,6 +341,15 @@ export function CheckInModal({ reservation, lookups, onClose }: { reservation: R
   const [idNumber, setIdNumber] = useState(guest?.idNumber ?? '');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [failure, setFailure] = useState('');
+  const { data: loaded } = useResource(async () => ({ found: await occasionService.forReservation(reservation.id) }), [reservation.id]);
+  const onFile = loaded?.found;
+  const [occasion, setOccasion] = useState<OccasionDraft>(emptyOccasionDraft());
+  const [seeded, setSeeded] = useState(false);
+  // Prefill once from what booking recorded; later edits are the desk's.
+  useEffect(() => {
+    if (loaded && !seeded) { setOccasion(draftFromOccasion(loaded.found)); setSeeded(true); }
+  }, [loaded, seeded]);
+  const provided = !!onFile;
 
   const isReady = (room: Room) => room.status === 'vacant' && room.cleaning === 'clean';
   const selected = lookups.roomById.get(roomId);
@@ -341,6 +367,7 @@ export function CheckInModal({ reservation, lookups, onClose }: { reservation: R
     const next = {
       roomId: required(roomId, 'Room'),
       idNumber: required(idNumber, 'ID number'),
+      occasion: validateOccasionDraft(occasion),
     };
     setErrors(next);
     if (hasErrors(next)) return;
@@ -349,6 +376,10 @@ export function CheckInModal({ reservation, lookups, onClose }: { reservation: R
       if (guest) await guestService.update(guest.id, { idType: idType as typeof guest.idType, idNumber });
       if (roomId !== reservation.roomId) await reservationService.assignRoom(reservation.id, roomId);
       await reservationService.checkIn(reservation.id);
+      // Booking's answer is verified or corrected here; an unanswered one is asked for and saved once.
+      if (occasion.type) {
+        await occasionService.saveForStay({ reservationId: reservation.id, guestId: reservation.guestId }, occasion, { source: 'check_in', verify: provided });
+      }
       toast(`${guestName(guest)} checked in to room ${selected?.number}`);
       onClose();
     } catch (error) {
@@ -389,6 +420,15 @@ export function CheckInModal({ reservation, lookups, onClose }: { reservation: R
           <option value="driving_licence">Driving licence</option>
         </SelectField>
         <TextField label="ID number" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} error={errors.idNumber} hint="Fictional data only, please." autoComplete="off" />
+        <span className="form-section">Occasion</span>
+        {provided && <div className="alert alert-info full"><Icon name="info" /><span>The guest told us about this when booking. Confirm it is right, or update it.</span></div>}
+        <OccasionFields
+          draft={occasion}
+          onChange={setOccasion}
+          label="Are you celebrating any special occasion during your stay?"
+          error={errors.occasion}
+          idPrefix="checkin-occasion"
+        />
         {failure && <div className="alert alert-bad full"><Icon name="alert" /><span>{failure}</span></div>}
       </form>
     </Modal>

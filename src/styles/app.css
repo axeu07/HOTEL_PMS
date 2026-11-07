@@ -1583,12 +1583,12 @@
   .meter i { display: block; height: 100%; background: var(--c1); print-color-adjust: exact; }
 }
 
-/* ---------- Popups fit the viewport: no scrolling ---------- */
+/* ---------- Popups fit the viewport; the body scrolls when content is taller ---------- */
 .modal-root { overflow: hidden !important; align-items: center !important; padding: 8px 16px !important; }
 .modal { max-height: calc(100vh - 16px); display: flex; flex-direction: column; overflow: hidden; }
 .modal > form { display: contents; }
 .modal-head { padding-top: 12px !important; padding-bottom: 6px !important; flex: none; }
-.modal-body { padding-top: 4px !important; padding-bottom: 10px !important; overflow: visible; min-height: 0; }
+.modal-body { padding-top: 4px !important; padding-bottom: 10px !important; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
 .modal-foot { padding-top: 10px !important; padding-bottom: 10px !important; flex: none; }
 .modal .form-grid { gap: 10px !important; }
 .modal .field { gap: 3px !important; }

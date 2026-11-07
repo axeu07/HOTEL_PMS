@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
+import { buildOccasionRows } from '@/domain/occasions';
 import { buildStayedGuests, leadRevenue } from '@/domain/customers';
 import { useResource } from '@/hooks/useResource';
 import { today } from '@/lib/dates';
-import { billingService, communicationService, guestService, leadService, reservationService, roomService, staffService, templateService } from '@/services';
+import { billingService, communicationService, guestService, occasionService, leadService, reservationService, roomService, staffService, templateService } from '@/services';
 
 /** Everything the customer screens and the dashboard share, loaded once and indexed. */
 export function useCrm() {
   const { data } = useResource(async () => {
-    const [leads, guests, reservations, invoices, categories, staff, templates, communications] = await Promise.all([
+    const [leads, guests, reservations, invoices, categories, staff, templates, communications, occasions] = await Promise.all([
       leadService.list(),
       guestService.list(),
       reservationService.list(),
@@ -16,8 +17,9 @@ export function useCrm() {
       staffService.list(),
       templateService.list(),
       communicationService.list(),
+      occasionService.list(),
     ]);
-    return { leads, guests, reservations, invoices, categories, staff, templates, communications };
+    return { leads, guests, reservations, invoices, categories, staff, templates, communications, occasions };
   });
 
   return useMemo(() => {
@@ -32,8 +34,9 @@ export function useCrm() {
     const staffById = new Map(data.staff.map((s) => [s.id, s]));
     const guestById = new Map(data.guests.map((g) => [g.id, g]));
     const stayed = buildStayedGuests(data.guests, data.reservations, data.invoices, now);
+    const occasionRows = buildOccasionRows(data.occasions, data.guests, data.reservations, now);
     const revenueOf = (lead: (typeof data.leads)[number]) => leadRevenue(lead, lead.reservationId ? reservationById.get(lead.reservationId) : undefined, billed);
-    return { ...data, now, billed, reservationById, categoryById, staffById, guestById, stayed, revenueOf };
+    return { ...data, now, billed, reservationById, categoryById, staffById, guestById, stayed, occasionRows, revenueOf };
   }, [data]);
 }
 

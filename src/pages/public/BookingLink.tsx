@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { asksCelebrant, asksDate, emptyOccasionDraft, OCCASION_CHOICES, type OccasionDraft } from '@/domain/occasions';
 import { useParams } from 'react-router-dom';
 import { addDays, nightsBetween, today } from '@/lib/dates';
 import { fmtDate, money } from '@/lib/format';
@@ -19,6 +20,7 @@ export default function BookingLink() {
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(2);
   const [notes, setNotes] = useState('');
+  const [occasion, setOccasion] = useState<OccasionDraft>(emptyOccasionDraft());
   const [left, setLeft] = useState<Record<string, number>>({});
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -76,7 +78,7 @@ export default function BookingLink() {
     setBusy(true);
     setError('');
     try {
-      const { code } = await publicLeadService.book(token, { categoryId, checkIn, checkOut, adults: guests, notes });
+      const { code } = await publicLeadService.book(token, { categoryId, checkIn, checkOut, adults: guests, notes, occasion });
       setDone(code);
     } catch (err) {
       setError(errorMessage(err));
@@ -137,6 +139,30 @@ export default function BookingLink() {
             );
           })}
         </fieldset>
+
+        <label className="gr-field">What’s the occasion for your stay? <em>(optional)</em>
+          <select value={occasion.type} name="occasion-type" onChange={(e) => setOccasion({ ...occasion, type: e.target.value as OccasionDraft['type'] })}>
+            <option value="">Select an occasion</option>
+            {OCCASION_CHOICES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+          </select>
+        </label>
+        {occasion.type && occasion.type !== 'none' && (
+          <>
+            {asksDate(occasion.type) && (
+              <label className="gr-field">Occasion date <em>(optional)</em>
+                <input type="date" name="occasion-date" value={occasion.date} onChange={(e) => setOccasion({ ...occasion, date: e.target.value })} />
+              </label>
+            )}
+            {asksCelebrant(occasion.type) && (
+              <label className="gr-field">{occasion.type === 'anniversary' ? 'Whose anniversary is it?' : occasion.type === 'birthday' ? 'Whose birthday is it?' : 'Who are we celebrating?'} <em>(optional)</em>
+                <input type="text" name="occasion-celebrant" maxLength={80} value={occasion.celebrant} onChange={(e) => setOccasion({ ...occasion, celebrant: e.target.value })} />
+              </label>
+            )}
+            <label className="gr-field">Notes or preferences <em>(optional)</em>
+              <textarea rows={2} maxLength={500} name="occasion-notes" value={occasion.notes} onChange={(e) => setOccasion({ ...occasion, notes: e.target.value })} />
+            </label>
+          </>
+        )}
 
         <label className="gr-field">Anything we should know? <em>(optional)</em>
           <textarea rows={2} maxLength={500} value={notes} onChange={(e) => setNotes(e.target.value)} />

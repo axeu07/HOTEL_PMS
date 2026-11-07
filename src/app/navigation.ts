@@ -25,6 +25,7 @@ export const NAV: NavItem[] = [
   { to: '/app/dashboard', label: 'Dashboard', icon: 'dashboard' },
   { to: '/app/customers/stayed', label: 'Stayed', icon: 'star', anyOf: ['customers.view'], inCustomers: true },
   { to: '/app/customers/leads', label: 'Leads', icon: 'funnel', anyOf: ['customers.view'], inCustomers: true },
+  { to: '/app/customers/occasions', label: 'Guest Occasions', shortLabel: 'Occasions', icon: 'cake', anyOf: ['customers.view'], inCustomers: true },
   { to: '/app/customers/templates', label: 'Message Templates', shortLabel: 'Templates', icon: 'message', anyOf: ['customers.view'], inCustomers: true },
   { to: '/app/front-desk', label: 'Front Desk', icon: 'concierge', anyOf: ['frontdesk.use'] },
   { to: '/app/rooms', label: 'Rooms', icon: 'bed', anyOf: ['rooms.view'], inProperty: true },

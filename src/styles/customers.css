@@ -94,6 +94,29 @@
   :root[data-theme] .tier-dist-item:hover { background: var(--surface-3); }
   :root[data-theme] .tier-dist-item[aria-pressed='true'] { background: color-mix(in srgb, var(--tier) 14%, transparent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--tier) 30%, transparent); }
   :root[data-theme] .tier-label { font-size: 12px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+  /* Guest occasions: the same compact strip as the loyalty distribution, six across. */
+  :root[data-theme] .occasion-dist { margin-top: -4px; }
+  :root[data-theme] .occasion-row { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  :root[data-theme] .occasion-item { align-items: center; gap: 9px; padding: 5px 8px; border-left-width: 0; border-radius: 10px; }
+  :root[data-theme] .occasion-text { display: grid; gap: 1px; min-width: 0; }
+  :root[data-theme] .occasion-figures { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+  :root[data-theme] .occasion-item .tier-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.02em; text-transform: none; font-size: 12px; }
+  :root[data-theme] .occasion-item .tier-rule { font-size: 11px; color: var(--ink-3); }
+  :root[data-theme] .occasion-icon, :root[data-theme] .occasion-chip > svg:first-child {
+    flex: none; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 9px;
+    color: var(--oc, var(--accent)); background: color-mix(in srgb, var(--oc, var(--accent)) 14%, transparent);
+  }
+  :root[data-theme] .occasion-chip { display: inline-flex; align-items: center; gap: 8px; --oc: var(--accent); }
+  :root[data-theme] .occasion-chip > svg:first-child { width: 26px; height: 26px; padding: 6px; }
+  :root[data-theme] .occasion-chip[data-occasion='birthday'], :root[data-theme] .occasion-item[data-occasion='birthday'] { --oc: var(--coral-deep); }
+  :root[data-theme] .occasion-chip[data-occasion='anniversary'], :root[data-theme] .occasion-item[data-occasion='anniversary'] { --oc: var(--brass); }
+  :root[data-theme] .occasion-chip[data-occasion='honeymoon'], :root[data-theme] .occasion-item[data-occasion='honeymoon'] { --oc: #b0577a; }
+  :root[data-theme] .occasion-chip[data-occasion='celebration'], :root[data-theme] .occasion-item[data-occasion='celebration'] { --oc: #7e62ba; }
+  :root[data-theme] .occasion-chip[data-occasion='family_vacation'], :root[data-theme] .occasion-item[data-occasion='family_vacation'] { --oc: var(--info); }
+  :root[data-theme] .occasion-chip[data-occasion='business_trip'], :root[data-theme] .occasion-item[data-occasion='business_trip'] { --oc: var(--ink-3); }
+  :root[data-theme] .occasion-chip[data-occasion='other'], :root[data-theme] .occasion-item[data-occasion='other'] { --oc: var(--accent); }
+  :root[data-theme] .occasion-item:hover { background: color-mix(in srgb, var(--oc, var(--accent)) 8%, transparent); }
+  :root[data-theme] .occasion-item:focus-visible { outline: 2px solid var(--oc, var(--accent)); outline-offset: 1px; }
   :root[data-theme] .tier-card {
     display: grid; gap: 2px; justify-items: start; text-align: left; padding: 14px 16px; border: 1.5px solid var(--line);
     border-radius: 18px; background: var(--surface); font: inherit; color: var(--ink); cursor: pointer; position: relative; overflow: hidden;
@@ -228,17 +251,23 @@
   :root[data-theme] .more-modules { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 18px; }
   :root[data-theme] .more-modules .btn { gap: 8px; }
 
+  @media (max-width: 1280px) {
+    :root[data-theme] .occasion-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
   @media (max-width: 960px) {
     :root[data-theme] .contact-grid,
     :root[data-theme] .lead-grid { grid-template-columns: minmax(0, 1fr); }
     :root[data-theme] .tier-dist { flex-direction: column; align-items: stretch; gap: 6px; }
     :root[data-theme] .tier-dist-row { grid-template-columns: minmax(0, 1fr); }
+    :root[data-theme] .occasion-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
 
   @media (max-width: 560px) {
     :root[data-theme] .funnel-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
     :root[data-theme] .tracker-note { display: none; }
     :root[data-theme] .tier-legend { grid-template-columns: minmax(0, 1fr); }
+    :root[data-theme] .occasion-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 }
 

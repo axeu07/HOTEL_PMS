@@ -39,13 +39,19 @@ function seed(): DemoDatabase {
   return db;
 }
 
+/** Collections added after a store was written start empty rather than missing. */
+function withNewCollections(db: DemoDatabase): DemoDatabase {
+  db.occasions ??= [];
+  return db;
+}
+
 function database(): DemoDatabase {
   if (cache) return cache;
   const raw = readStorage(DB_KEY);
   const meta = readMeta();
   if (raw && meta?.version === SEED_VERSION) {
     try {
-      cache = JSON.parse(raw) as DemoDatabase;
+      cache = withNewCollections(JSON.parse(raw) as DemoDatabase);
       return cache;
     } catch {
       /* Corrupt store: fall through to a clean seed. */
@@ -73,7 +79,7 @@ function refreshFromStorage(): boolean {
   const raw = readStorage(DB_KEY);
   if (!raw || readMeta()?.version !== SEED_VERSION) return false;
   try {
-    cache = JSON.parse(raw) as DemoDatabase;
+    cache = withNewCollections(JSON.parse(raw) as DemoDatabase);
     return true;
   } catch {
     return false;

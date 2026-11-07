@@ -1,4 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { emptyOccasionDraft, type OccasionDraft } from '@/domain/occasions';
+import { OccasionFields } from '@/features/occasions';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp, useAuth } from '@/app/providers';
 import { Art } from '@/components/art';
@@ -34,6 +36,7 @@ function RequestStay({ query, categories, onClose }: { query: StayQuery; categor
     phone: '',
     notes: '',
   });
+  const [occasion, setOccasion] = useState<OccasionDraft>(emptyOccasionDraft());
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [failure, setFailure] = useState('');
   const [done, setDone] = useState<Reservation | null>(null);
@@ -84,6 +87,7 @@ function RequestStay({ query, categories, onClose }: { query: StayQuery; categor
         adults: Number(form.guests),
         children: 0,
         notes: form.notes,
+        occasion,
       });
       setDone(reservation);
     } catch (error) {
@@ -167,6 +171,7 @@ function RequestStay({ query, categories, onClose }: { query: StayQuery; categor
           <span className="serif" style={{ fontSize: 22 }}>{category && nights ? money(category.basePrice * nights) : '–'}</span>
           {nights > 0 && <span className="field-hint">{nights} night{nights === 1 ? '' : 's'}</span>}
         </div>
+        <OccasionFields draft={occasion} onChange={setOccasion} idPrefix="request-occasion" />
         <TextAreaField label="Anything we should know?" wrapClass="full" value={form.notes} onChange={set('notes')} />
         {failure && <div className="alert alert-bad full"><Icon name="alert" /><span>{failure}</span></div>}
       </form>

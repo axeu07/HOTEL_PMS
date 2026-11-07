@@ -22,12 +22,12 @@ import type {
   Shift,
   Staff,
 } from '@/types/domain';
-import { assignBirthdays, buildCrmDemo, buildTemplates } from './crmDemo';
+import { assignBirthdays, buildCrmDemo, buildOccasionsDemo, buildTemplates } from './crmDemo';
 import { buildDemoRegistrations, buildReturningGuest, lendHistory } from './guestDemo';
 import { DEMO_ACCOUNTS, HOTEL, MENU, ROLES, ROOM_CATEGORIES, STAFF_RECORDS, FIRST_NAMES, LAST_NAMES, CITIES, COMPANIES } from './fixtures';
 
 /** Bump to discard stored demo data after a schema change. */
-export const SEED_VERSION = 5;
+export const SEED_VERSION = 6;
 
 /** Small seeded generator, so every reset produces the same story. */
 function makeRandom(seed: number) {
@@ -659,5 +659,6 @@ export function createSeedDatabase(): DemoDatabase {
     leads: crm.leads,
     messageTemplates: buildTemplates(now),
     communications: crm.communications,
+    occasions: buildOccasionsDemo({ now, guests, reservations }),
   };
 }
