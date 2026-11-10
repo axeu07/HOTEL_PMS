@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers';
 import { EmailLogo, WhatsAppLogo } from '@/components/brandIcons';
 import { Bars, SERIES } from '@/components/charts';
 import { Icon, type IconName } from '@/components/icons';
-import { Badge, Button, EmptyState, Modal, PageLoading, Panel, PersonCell, SearchInput, StatCard, StatGrid } from '@/components/ui';
+import { Badge, Button, EmptyState, Meter, Modal, PageLoading, Panel, PersonCell, SearchInput, StatCard } from '@/components/ui';
 import { LOYALTY_LABEL, LOYALTY_ORDER } from '@/domain/loyalty';
 import { isOpenLead, LEAD_SOURCE, LEAD_SOURCE_ORDER, LEAD_STATUS } from '@/domain/leads';
 import { fmtDate, fmtDayMonth, money, moneyCompact, percent, timeAgo } from '@/lib/format';
@@ -86,6 +86,34 @@ function LeadPicker({ crm, onPick, onClose }: { crm: Crm; onPick: (lead: Lead) =
         )}
       </div>
     </Modal>
+  );
+}
+
+/* ---------- KPI group ---------- */
+
+type KpiMetric = { icon: IconName; label: string; value: ReactNode; note: string; tone?: 'good' | 'warn' | 'info' | 'sage' | 'gold'; to?: string; testId?: string; meter?: number };
+
+/** One card holding three metrics side by side. Same data as the individual StatCards it replaces. */
+function KpiGroup({ label, metrics }: { label: string; metrics: KpiMetric[] }) {
+  return (
+    <section className="kpi-group" aria-label={label}>
+      {metrics.map((m) => {
+        const body = (
+          <>
+            <div className="stat-top">
+              <span className="stat-icon"><Icon name={m.icon} size={15} /></span>
+              <span className="ledger-label">{m.label}</span>
+            </div>
+            <div className="ledger-value" data-testid={m.testId}>{m.value}</div>
+            {m.meter !== undefined && <Meter value={m.meter} tone={m.tone} />}
+            <div className="ledger-note" title={m.note}>{m.note}</div>
+          </>
+        );
+        return m.to
+          ? <Link key={m.label} className="kpi-metric is-link" data-tone={m.tone ?? 'teal'} to={m.to}>{body}</Link>
+          : <div key={m.label} className="kpi-metric" data-tone={m.tone ?? 'teal'}>{body}</div>;
+      })}
+    </section>
   );
 }
 
@@ -173,20 +201,24 @@ export function LeadDashboard() {
         ))}
       </div>
 
-      <StatGrid>
-        <StatCard icon="funnel" label="Total leads" testId="kpi-total-leads" value={leads.length} note={`${view.open.length} still open`} to="/app/customers/leads" />
-        <StatCard icon="userPlus" tone="info" label="New leads today" testId="kpi-new-leads" value={newToday} note="Enquiries received today" to="/app/customers/leads" />
-        <StatCard icon="target" tone="good" label="Conversion rate" testId="kpi-conversion" value={percent(rate, 1)} meter={rate} note={`${view.converted.length} of ${leads.length} leads booked`} />
-        <StatCard icon="clock" tone={view.due.length ? 'warn' : 'good'} label="Pending follow-ups" testId="kpi-followups" value={view.due.length} note="Due today or overdue" to="/app/customers/leads?due=1" />
-      </StatGrid>
-      <StatGrid>
-        <StatCard icon="calendarCheck" tone="sage" label="Bookings from leads" testId="kpi-lead-bookings" value={view.bookings.length} note="Not cancelled" />
-        {showRevenue
-          ? <StatCard icon="coins" tone="gold" label="Revenue from leads" testId="kpi-lead-revenue" value={moneyCompact(view.revenue)} note="Billed on converted leads" />
-          : <StatCard icon="star" tone="gold" label="VIP guests" value={view.tiers.find((t) => t.tier === 'vip')?.count ?? 0} note="Top loyalty tier" to="/app/customers/stayed" />}
+      <div className="lead-kpi-grid">
+        <KpiGroup label="Lead overview" metrics={[
+          { icon: 'funnel', label: 'Total leads', testId: 'kpi-total-leads', value: leads.length, note: `${view.open.length} still open`, to: '/app/customers/leads' },
+          { icon: 'userPlus', tone: 'info', label: 'New leads today', testId: 'kpi-new-leads', value: newToday, note: 'Enquiries received today', to: '/app/customers/leads' },
+          { icon: 'clock', tone: view.due.length ? 'warn' : 'good', label: 'Pending follow-ups', testId: 'kpi-followups', value: view.due.length, note: 'Due today or overdue', to: '/app/customers/leads?due=1' },
+        ]} />
+        <KpiGroup label="Lead performance" metrics={[
+          { icon: 'calendarCheck', tone: 'sage', label: 'Bookings from leads', testId: 'kpi-lead-bookings', value: view.bookings.length, note: 'Not cancelled' },
+          showRevenue
+            ? { icon: 'coins', tone: 'gold', label: 'Revenue from leads', testId: 'kpi-lead-revenue', value: moneyCompact(view.revenue), note: 'Billed on converted leads' }
+            : { icon: 'star', tone: 'gold', label: 'VIP guests', value: view.tiers.find((t) => t.tier === 'vip')?.count ?? 0, note: 'Top loyalty tier', to: '/app/customers/stayed' },
+          { icon: 'target', tone: 'good', label: 'Conversion rate', testId: 'kpi-conversion', value: percent(rate, 1), meter: rate, note: `${view.converted.length} of ${leads.length} leads booked` },
+        ]} />
+      </div>
+      <div className="lead-kpi-grid">
         <StatCard icon="refresh" tone="info" label="Returning guests" testId="kpi-returning" value={view.returning} note={`${crm.stayed.length ? Math.round((view.returning / crm.stayed.length) * 100) : 0}% of guests who stayed`} to="/app/customers/stayed" />
         <StatCard icon="users" label="Guests who stayed" value={crm.stayed.length} note="In the loyalty programme" to="/app/customers/stayed" />
-      </StatGrid>
+      </div>
 
       <div className="grid-1-1 section-gap">
         <Panel title="Leads by source" icon="funnel" subtitle="Where enquiries come from, and how many of each booked.">

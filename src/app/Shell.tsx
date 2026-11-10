@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { Link, NavLink, useLocation, useNavigate, useNavigationType } from 'react-router-dom';
-import { Icon } from '@/components/icons';
+import { BrandMark, Icon } from '@/components/icons';
 import { SidebarScenery } from '@/components/decor';
 import { Avatar, Button, Modal, useFeedback } from '@/components/ui';
 import { useResource } from '@/hooks/useResource';
@@ -476,7 +476,8 @@ function Sidebar({ open, collapsed, onClose, onToggleCollapsed }: { open: boolea
       <SidebarScenery />
       <div className="sidebar-top">
         <Link to="/app/dashboard" className="brand" title={collapsed ? hotel.name : undefined}>
-          <img src="/images/checkmate-logo.png" alt={hotel.name} className="brand-logo" />
+          <BrandMark size={22} />
+          <img src="/images/hotel-pms-logo.png" alt={hotel.name} className="brand-logo" />
         </Link>
         <button
           type="button"

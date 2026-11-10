@@ -10,8 +10,12 @@ const NAV_BY_ROLE: Record<RoleKey, string[]> = {
   housekeeping: ['dashboard', 'rooms', 'housekeeping', 'settings'],
 };
 
-/** Links in the sidebar. Quick Actions, Reservations, Restaurant, Reports, Staff and Settings are routed but not listed there. */
-const SIDEBAR_LINKS: Record<RoleKey, number> = { admin: 10, manager: 10, reception: 9, housekeeping: 3 };
+/**
+ * Links inside the sidebar's nav, counting the three Property pages in its segmented control and the
+ * single Customers row. Admin: Dashboard, Customers, Quick Actions, Front Desk, Reservations, Rooms,
+ * Housekeeping, Guests, Restaurant, Billing, Reports, Staff, Settings, AI Insights.
+ */
+const SIDEBAR_LINKS: Record<RoleKey, number> = { admin: 14, manager: 14, reception: 10, housekeeping: 4 };
 
 test.describe('entry experience', () => {
   test('landing page shows the hotel, rooms, gallery and sample logins', async ({ page }) => {
@@ -133,7 +137,7 @@ test.describe('authentication and roles', () => {
     await dialog(page, 'Switch demo role').getByRole('button', { name: /^Housekeeping/ }).click();
     await toast(page, 'Now signed in as Housekeeping');
     await expect(page.getByTestId('kpi-my-tasks')).toBeVisible();
-    await expect(page.locator('.sidebar nav a')).toHaveCount(3);
+    await expect(page.locator('.sidebar nav a')).toHaveCount(SIDEBAR_LINKS.housekeeping);
   });
 });
 
@@ -595,11 +599,11 @@ test.describe('staff, reports and settings', () => {
   test('hotel profile and currency change across the product', async ({ page }) => {
     await signIn(page, 'admin');
     await page.goto('/app/settings');
-    await page.getByLabel('Hotel name').fill('Checkmate Stays Palace');
+    await page.getByLabel('Hotel name').fill('HOTEL PMS Palace');
     await page.getByLabel('Currency').selectOption('USD');
     await page.getByRole('button', { name: 'Save profile' }).click();
     await toast(page, 'Hotel profile saved');
-    await expect(page.locator('.brand-logo')).toHaveAttribute('alt', 'Checkmate Stays Palace');
+    await expect(page.locator('.brand-logo')).toHaveAttribute('alt', 'HOTEL PMS Palace');
     await page.goto('/app/billing');
     await expect(page.locator('tbody tr').first()).toContainText('$');
   });

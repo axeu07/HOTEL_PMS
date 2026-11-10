@@ -1,3 +1,4 @@
+import { HOTEL } from '@/data/fixtures';
 import { createSeedDatabase, SEED_VERSION } from '@/data/seed';
 import { today } from '@/lib/dates';
 import type { DemoDatabase, Entity, ID } from '@/types/domain';
@@ -45,13 +46,28 @@ function withNewCollections(db: DemoDatabase): DemoDatabase {
   return db;
 }
 
+/**
+ * The sample hotel was renamed. A store written before that still holds the old name in the hotel
+ * record and in message text that was seeded from it. Re-seeding would throw away everything else the
+ * browser has, so the name alone is swapped in place and written back once. Nothing but this exact
+ * phrase changes. Safe to delete once no browser holds a store from before the rename.
+ */
+const PREVIOUS_HOTEL_NAME = 'Checkmate Stays';
+
+function withCurrentHotelName(raw: string): string {
+  if (!raw.includes(PREVIOUS_HOTEL_NAME)) return raw;
+  const migrated = raw.replaceAll(PREVIOUS_HOTEL_NAME, HOTEL.name);
+  writeStorage(DB_KEY, migrated);
+  return migrated;
+}
+
 function database(): DemoDatabase {
   if (cache) return cache;
   const raw = readStorage(DB_KEY);
   const meta = readMeta();
   if (raw && meta?.version === SEED_VERSION) {
     try {
-      cache = withNewCollections(JSON.parse(raw) as DemoDatabase);
+      cache = withNewCollections(JSON.parse(withCurrentHotelName(raw)) as DemoDatabase);
       return cache;
     } catch {
       /* Corrupt store: fall through to a clean seed. */
@@ -79,7 +95,7 @@ function refreshFromStorage(): boolean {
   const raw = readStorage(DB_KEY);
   if (!raw || readMeta()?.version !== SEED_VERSION) return false;
   try {
-    cache = withNewCollections(JSON.parse(raw) as DemoDatabase);
+    cache = withNewCollections(JSON.parse(withCurrentHotelName(raw)) as DemoDatabase);
     return true;
   } catch {
     return false;

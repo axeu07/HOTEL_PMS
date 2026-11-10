@@ -1,7 +1,7 @@
 import { useId } from 'react';
 
 /*
- * The painted parts of the Checkmate Stays look. Lightweight inline SVG, coloured from tokens so each
+ * The painted parts of the HOTEL PMS look. Lightweight inline SVG, coloured from tokens so each
  * theme gets its own version. All decorative: hidden from assistive technology, never hit-tested,
  * and left out of print.
  */

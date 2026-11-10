@@ -183,6 +183,7 @@ function RequestStay({ query, categories, onClose }: { query: StayQuery; categor
 
 function DemoAccess() {
   const navigate = useNavigate();
+  const { hotel } = useApp();
   const { signInAs } = useAuth();
   const { run, toast } = useFeedback();
   const { data } = useResource(async () => {
@@ -211,7 +212,7 @@ function DemoAccess() {
         <div className="eyebrow">Product demonstration</div>
         <h2 className="site-h2">Step behind the front desk</h2>
         <p className="prose">
-          Everything above is the guest's view of Checkmate Stays. Enter as one of four team members to run the
+          Everything above is the guest's view of {hotel.name}. Enter as one of four team members to run the
           hotel in Folio, our management suite. All data is fictional and resets with one click.
         </p>
         <div className="role-grid">
@@ -336,7 +337,7 @@ export default function Landing() {
           <div className="eyebrow">The hotel</div>
           <h2 className="site-h2">Built as a summer court. Kept as a place to rest.</h2>
           <p className="prose">
-            Checkmate Stays was raised in 1926 as a lakeside retreat, and it has never quite lost the habit of
+            {hotel.name} was raised in 1926 as a lakeside retreat, and it has never quite lost the habit of
             hospitality. Thick lime walls keep the summers cool; the winters are spent beside the fire in the
             reading room. Our team of sixty has an average tenure of nine years, and many of them will know
             your name by the second morning.

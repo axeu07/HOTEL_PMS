@@ -1,3 +1,5 @@
+import { useId } from 'react';
+import { BRAND_MARK } from './brandMarkData';
 import {
   Activity,
   ArrowDown,
@@ -204,13 +206,19 @@ export function Icon({ name, size = 16 }: { name: IconName; size?: number }) {
   return <Glyph size={size} strokeWidth={1.75} aria-hidden="true" />;
 }
 
-/** Product mark: a doorway within an arch. */
+/** Product mark: the blue infinity ribbon. `size` is its height; the width follows the mark's own proportions. */
 export function BrandMark({ size = 26 }: { size?: number }) {
+  // Each instance gets its own gradient id, so several marks on one page never share or clash.
+  const id = `brand-mark-${useId().replace(/:/g, '')}`;
+  const { width, height, path, stops } = BRAND_MARK;
   return (
-    <svg className="brand-mark" width={size} height={size} viewBox="0 0 32 32" fill="none" stroke="currentColor" aria-hidden="true">
-      <path d="M6 28V14a10 10 0 0 1 20 0v14" strokeWidth="2.2" />
-      <path d="M12 28V16a4 4 0 0 1 8 0v12" strokeWidth="1.8" />
-      <path d="M3 28h26" strokeWidth="2.2" strokeLinecap="round" />
+    <svg className="brand-mark" width={(size * width) / height} height={size} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={width} y2="0">
+          {stops.map(([offset, color]) => <stop key={offset} offset={offset} stopColor={color} />)}
+        </linearGradient>
+      </defs>
+      <path d={path} fill={`url(#${id})`} fillRule="evenodd" />
     </svg>
   );
 }

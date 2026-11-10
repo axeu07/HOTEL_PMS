@@ -106,7 +106,7 @@ export const COMPETITORS = [
   { name: 'The Deodar Retreat', rating: 4.3, rate: 9800, position: 'Below' },
   { name: 'Saffron Lodge', rating: 4.6, rate: 12600, position: 'Above' },
   { name: 'Orchard & Oak Inn', rating: 4.1, rate: 8400, position: 'Below' },
-  { name: 'Checkmate Stays', rating: 4.6, rate: 11500, position: 'You' },
+  { name: 'HOTEL PMS', rating: 4.6, rate: 11500, position: 'You' },
 ];
 
 export const PRICING_IMPACT = { monthly: 486000, occupancyShift: -0.6, adrShift: 6.8 };

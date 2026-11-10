@@ -724,7 +724,7 @@ select.input { padding-right: 6px; }
 .brand-logo { display: block; height: 42px; width: auto; max-width: calc(100% - 68px); }
 :root[data-theme] .brand { padding: 0 34px 0 0; justify-content: center; }
 :root[data-theme] .sidebar-collapsed .brand { padding: 0; }
-.brand-logo { margin-inline: auto; }
+.brand-logo { flex: none; }
 :root[data-theme] .sidebar-top { margin-bottom: 14px; }
 :root[data-theme] .sidebar-top { position: relative; }
 :root[data-theme] .sidebar-top .sidebar-collapse { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; }

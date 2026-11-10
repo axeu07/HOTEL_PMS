@@ -1,5 +1,5 @@
 /*
- * Checkmate Stays design tokens: soft emerald, warm ivory, sage, champagne.
+ * HOTEL PMS design tokens: soft emerald, warm ivory, sage, champagne.
  *
  * The single source of colour for the signed-in product. `data-theme` is set only while the app shell
  * is mounted, so the public site keeps the :root palette in global.css. Rules elsewhere read these

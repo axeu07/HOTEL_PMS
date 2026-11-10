@@ -148,7 +148,7 @@ test.describe('guest review page', () => {
     const errors = watchErrors(guest);
     await guest.goto(`/review/${TOKEN}`);
 
-    await expect(guest.getByRole('heading', { level: 1 })).toHaveText('How was your stay at Checkmate Stays?');
+    await expect(guest.getByRole('heading', { level: 1 })).toHaveText('How was your stay at HOTEL PMS?');
     const faces = guest.getByRole('radio');
     await expect(faces).toHaveCount(5);
     const names = await faces.evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')));
@@ -200,7 +200,7 @@ test.describe('guest review page', () => {
     for (const bad of ['nonsense1234', 'x', 'hotel-1']) {
       await page.goto(`/review/${bad}`);
       await expect(page.getByTestId('review-invalid')).toBeVisible();
-      await expect(page.getByText('Checkmate Stays')).toHaveCount(0);
+      await expect(page.getByText('HOTEL PMS')).toHaveCount(0);
     }
   });
 

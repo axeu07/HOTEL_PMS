@@ -2,25 +2,36 @@ import { expect, test } from '@playwright/test';
 import { dialog, readDb, signIn, toast, watchErrors } from './helpers';
 
 test.describe('customers', () => {
-  test('sidebar shows the new structure and keeps hidden modules routed', async ({ page }) => {
+  test('sidebar lists the hotel modules alongside the CRM, in order, and each opens', async ({ page }) => {
     const errors = watchErrors(page);
     await signIn(page, 'admin');
     const nav = page.locator('.sidebar nav');
-    for (const name of ['Dashboard', 'Customers', 'Front Desk', 'Property', 'Finance / Billing', 'AI Insights']) {
-      await expect(nav.getByText(name, { exact: true }).first()).toBeVisible();
-    }
-    for (const hidden of ['Restaurant', 'Reports', 'Staff', 'Reservations', 'Quick Actions']) {
-      await expect(nav.getByText(hidden, { exact: true })).toHaveCount(0);
-    }
-    await nav.getByRole('button', { name: 'Customers' }).click();
-    await nav.getByRole('link', { name: 'Leads' }).click();
-    await expect(page).toHaveURL(/customers\/leads/);
-    // Hidden modules still open by their routes.
-    for (const route of ['reservations', 'restaurant', 'reports', 'staff', 'quick-actions', 'settings']) {
-      await page.goto(`/app/${route}`);
+
+    // One entry per row, top to bottom: ordinary links, plus the Property group's toggle.
+    const rows = nav.locator('> .nav-link .nav-label, > .nav-group > .nav-group-toggle .nav-label');
+    await expect(rows).toHaveText([
+      'Dashboard', 'Customers', 'Quick Actions', 'Front Desk', 'Reservations', 'Property',
+      'Restaurant', 'Finance / Billing', 'Reports', 'Staff', 'Settings', 'AI Insights',
+    ]);
+
+    // Every single-page row leads to its own screen. Property's pages are covered in interaction.spec.ts.
+    const routes: [string, RegExp][] = [
+      ['Quick Actions', /quick-actions/], ['Front Desk', /front-desk/], ['Reservations', /reservations/],
+      ['Restaurant', /restaurant/], ['Finance / Billing', /billing/], ['Reports', /reports/],
+      ['Staff', /staff/], ['Settings', /settings/], ['Customers', /customers\/stayed/], ['AI Insights', /ai\/overview/], ['Dashboard', /dashboard/],
+    ];
+    for (const [name, url] of routes) {
+      // AI Insights carries a "New" badge in its accessible name.
+      await nav.getByRole('link', { name: new RegExp(`^${name}( New)?$`) }).click();
+      await expect(page).toHaveURL(url);
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-      await expect(page).toHaveURL(new RegExp(route));
+      await expect(page.getByText('Not part of this role')).toHaveCount(0);
     }
+
+    // The CRM is still reached through Customers, and its tabs still work.
+    await nav.getByRole('link', { name: 'Customers', exact: true }).click();
+    await page.getByRole('navigation', { name: 'Customers' }).getByRole('link', { name: 'Leads' }).click();
+    await expect(page).toHaveURL(/customers\/leads/);
     expect(errors).toEqual([]);
   });
 
@@ -41,7 +52,7 @@ test.describe('customers', () => {
     await page.locator('tbody tr').first().getByTestId('contact-whatsapp').click();
     const d = dialog(page, /Message/);
     await expect(d).toBeVisible();
-    await expect(d.locator('.wa-bubble')).toContainText('Checkmate Stays');
+    await expect(d.locator('.wa-bubble')).toContainText('HOTEL PMS');
     const link = d.getByTestId('open-whatsapp');
     await expect(link).toHaveAttribute('href', /^https:\/\/wa\.me\/\d+\?text=/);
     await link.evaluate((a) => a.addEventListener('click', (e) => e.preventDefault()));

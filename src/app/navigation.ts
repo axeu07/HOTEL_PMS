@@ -14,32 +14,33 @@ export interface NavItem {
   /** Sits inside the Customers item's segmented control rather than as its own row. */
   inCustomers?: boolean;
   /**
-   * Kept out of the sidebar. The page, its route, its permission and its data are all intact: it is
-   * reached from the dashboard, from contextual links, notifications and search.
+   * Keeps the item out of the sidebar while its page, route, permission and data stay intact (it is
+   * then reached from contextual links, notifications and search). Nothing is hidden at present.
    */
   hidden?: boolean;
 }
 
-/** In sidebar order. A group's row appears where its first permitted page would be. */
+/**
+ * In sidebar order. A group's row appears where its first permitted page would be, so the Customers
+ * (CRM) row sits under Dashboard and the Property row between Reservations and Restaurant.
+ */
 export const NAV: NavItem[] = [
   { to: '/app/dashboard', label: 'Dashboard', icon: 'dashboard' },
   { to: '/app/customers/stayed', label: 'Stayed', icon: 'star', anyOf: ['customers.view'], inCustomers: true },
   { to: '/app/customers/leads', label: 'Leads', icon: 'funnel', anyOf: ['customers.view'], inCustomers: true },
   { to: '/app/customers/occasions', label: 'Guest Occasions', shortLabel: 'Occasions', icon: 'cake', anyOf: ['customers.view'], inCustomers: true },
   { to: '/app/customers/templates', label: 'Message Templates', shortLabel: 'Templates', icon: 'message', anyOf: ['customers.view'], inCustomers: true },
+  { to: '/app/quick-actions', label: 'Quick Actions', icon: 'tasks', anyOf: ['quickactions.view'] },
   { to: '/app/front-desk', label: 'Front Desk', icon: 'concierge', anyOf: ['frontdesk.use'] },
+  { to: '/app/reservations', label: 'Reservations', icon: 'calendar', anyOf: ['reservations.view'] },
   { to: '/app/rooms', label: 'Rooms', icon: 'bed', anyOf: ['rooms.view'], inProperty: true },
   { to: '/app/housekeeping', label: 'Housekeeping', icon: 'broom', anyOf: ['housekeeping.view'], inProperty: true },
   { to: '/app/guests', label: 'Guests', icon: 'users', anyOf: ['guests.view'], inProperty: true },
+  { to: '/app/restaurant', label: 'Restaurant', icon: 'fork', anyOf: ['restaurant.use'] },
   { to: '/app/billing', label: 'Finance / Billing', icon: 'receipt', anyOf: ['billing.use'] },
-
-  /* Out of the sidebar, still routed and permissioned. See `hidden`. */
-  { to: '/app/quick-actions', label: 'Quick Actions', icon: 'tasks', anyOf: ['quickactions.view'], hidden: true },
-  { to: '/app/reservations', label: 'Reservations', icon: 'calendar', anyOf: ['reservations.view'], hidden: true },
-  { to: '/app/restaurant', label: 'Restaurant', icon: 'fork', anyOf: ['restaurant.use'], hidden: true },
-  { to: '/app/reports', label: 'Reports', icon: 'chart', anyOf: ['reports.view'], hidden: true },
-  { to: '/app/staff', label: 'Staff', icon: 'badge', anyOf: ['staff.view'], hidden: true },
-  { to: '/app/settings', label: 'Settings', icon: 'gear', hidden: true },
+  { to: '/app/reports', label: 'Reports', icon: 'chart', anyOf: ['reports.view'] },
+  { to: '/app/staff', label: 'Staff', icon: 'badge', anyOf: ['staff.view'] },
+  { to: '/app/settings', label: 'Settings', icon: 'gear' },
 ];
 
 export const CUSTOMERS_LABEL = 'Customers';

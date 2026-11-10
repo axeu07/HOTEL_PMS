@@ -4,7 +4,7 @@ import type { Hotel, MenuItem, Permission, Role, RoomCategory, Staff, User } fro
 
 export const HOTEL: Hotel = {
   id: 'hotel-1',
-  name: 'Checkmate Stays',
+  name: 'HOTEL PMS',
   tagline: 'A lakeside courtyard hotel in the hills of Nairavale',
   address: '14 Lake Promenade, Old Cantonment',
   city: 'Nairavale',

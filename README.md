@@ -1,6 +1,6 @@
 # Folio hotel suite: sales demo
 
-An interactive hotel management demo, shown running a fictional hotel called **Checkmate Stays**.
+An interactive hotel management demo, shown running a fictional hotel called **HOTEL PMS**.
 It has no backend or database and takes no real payments. Everything runs in the browser, stores its
 data in `localStorage`, and works offline once loaded. All people, companies and figures are invented.
 
@@ -35,10 +35,10 @@ with dates rebuilt around today. If the data is a day or more old, a banner offe
 
 ## Customers, leads and booking links
 
-The sidebar is: Dashboard, Customers (Stayed, Leads, Message Templates), Front Desk, Property, Finance / Billing, AI Insights.
-Reservations, Restaurant, Reports, Staff, Quick Actions and Settings are hidden from the sidebar (`hidden: true` in
-`src/app/navigation.ts`) but keep their routes, permissions and data; the dashboard's "Hotel modules" panel, contextual links,
-search and the account menu reach them.
+The sidebar is: Dashboard, Customers (Stayed, Leads, Guest Occasions, Message Templates), Quick Actions, Front Desk, Reservations,
+Property (Rooms, Housekeeping, Guests), Restaurant, Finance / Billing, Reports, Staff, Settings, AI Insights. Each row is listed
+in `src/app/navigation.ts` and is shown only to roles holding its permission. Nothing is hidden at the moment; `hidden: true` on a
+`NAV` item would take it off the sidebar while keeping its route, permission and data.
 
 - **Leads** are sample data. Nothing is connected to Meta, Instagram or any booking platform. Add one with Add lead.
 - **Messages are not sent from the app.** WhatsApp or the mail app opens with the text written; history records "prepared".

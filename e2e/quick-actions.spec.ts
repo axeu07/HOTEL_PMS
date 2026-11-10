@@ -65,9 +65,11 @@ for (const role of ['admin', 'manager'] as RoleKey[]) {
       expect(errors).toEqual([]);
     });
 
-    test('Quick Actions is off the sidebar, and View All opens the page', async ({ page }) => {
-      await expect(page.locator('.sidebar').getByRole('link', { name: 'Quick Actions' })).toHaveCount(0);
+    test('Quick Actions is in the sidebar, and View All opens the same page', async ({ page }) => {
+      await expect(page.locator('.sidebar').getByRole('link', { name: 'Quick Actions' })).toHaveCount(1);
 
+      // The dashboard opens on the Leads tab; the Quick Actions cards sit on the Sales tab.
+      await page.getByRole('tab', { name: 'Sales' }).click();
       await page.locator('.qa-section').getByRole('link', { name: 'View All' }).click();
       await expect(page).toHaveURL(/\/app\/quick-actions$/);
       await expect(page.getByRole('heading', { level: 1, name: 'Quick Actions' })).toBeVisible();

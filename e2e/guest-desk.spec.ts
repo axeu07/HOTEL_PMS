@@ -130,7 +130,7 @@ test.describe('Sharing bills by WhatsApp and email', () => {
 
     const mailHref = (await mail.getAttribute('href'))!;
     expect(mailHref).toMatch(/^mailto:vikram\.rao@example\.com\?subject=/);
-    expect(decodeURIComponent(mailHref)).toContain('Your bill from Checkmate Stays');
+    expect(decodeURIComponent(mailHref)).toContain('Your bill from HOTEL PMS');
 
     // The same two buttons are on the invoice itself. Stop the navigation: only the link matters here.
     await page.evaluate(() => document.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a[href^="mailto"], a[href*="wa.me"]')) e.preventDefault(); }, true));
@@ -212,7 +212,7 @@ test.describe('Guest ID QR and self check-in', () => {
 
     await guest.goto(`/register/${REGISTER_TOKEN}`);
     await expect(guest.getByRole('heading', { name: 'Register for your stay' })).toBeVisible();
-    await expect(guest.getByText('Checkmate Stays').first()).toBeVisible();
+    await expect(guest.getByText('HOTEL PMS').first()).toBeVisible();
     // No staff navigation on the public page, and the page does not require sign-in.
     await expect(guest.locator('.sidebar, nav[aria-label="Main"]')).toHaveCount(0);
     expect(guest.url()).toContain('/register/');
@@ -362,7 +362,7 @@ test.describe('AI Guest Insights: loyalty', () => {
   });
 });
 
-test.describe('Checkmate logo in dark mode', () => {
+test.describe('Brand logo in dark mode', () => {
   test('the same logo is drawn pure white in dark mode, same size and shape, and returns to normal in light', async ({ page }) => {
     await signIn(page, 'admin');
     const logo = page.locator('img.brand-logo');
