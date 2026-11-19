@@ -1,4 +1,8 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+
+type Vars = CSSProperties & Record<`--${string}`, string | number>;
+/** Animation timing for the m-* classes in styles/landing-motion.css. A negative delay starts mid-cycle. */
+const t = (duration: number, delay = 0, extra: Vars = {}): Vars => ({ animationDuration: `${duration}s`, animationDelay: `${-delay}s`, ...extra });
 
 /**
  * Original illustration library for the fictional hotel. Everything is vector and
@@ -28,9 +32,11 @@ function Hills({ dusk = false }: { dusk?: boolean }) {
 
 function Deodar({ x, y, s = 1, fill = INK }: { x: number; y: number; s?: number; fill?: string }) {
   return (
-    <g transform={`translate(${x} ${y}) scale(${s})`} fill={fill}>
-      <path d="M0 -120 L26 -72 L14 -74 L38 -30 L20 -32 L48 14 L-48 14 L-20 -32 L-38 -30 L-14 -74 L-26 -72Z" />
-      <rect x="-5" y="14" width="10" height="22" />
+    <g transform={`translate(${x} ${y}) scale(${s})`}>
+      <g className="m-sway" style={t(4 + (x % 3), x / 40)} fill={fill}>
+        <path d="M0 -120 L26 -72 L14 -74 L38 -30 L20 -32 L48 14 L-48 14 L-20 -32 L-38 -30 L-14 -74 L-26 -72Z" />
+        <rect x="-5" y="14" width="10" height="22" />
+      </g>
     </g>
   );
 }
@@ -38,6 +44,35 @@ function Deodar({ x, y, s = 1, fill = INK }: { x: number; y: number; s?: number;
 function Arch({ x, y, w, h, fill, opacity }: { x: number; y: number; w: number; h: number; fill: string; opacity?: string }) {
   const r = w / 2;
   return <path d={`M${x} ${y + h} V${y + r} A${r} ${r} 0 0 1 ${x + w} ${y + r} V${y + h}Z`} fill={fill} opacity={opacity} />;
+}
+
+function Mist({ y, opacity = 0.35, duration = 22, delay = 0 }: { y: number; opacity?: number; duration?: number; delay?: number }) {
+  return (
+    <g className="m-drift wide" style={t(duration, delay)} fill="#fff" opacity={opacity}>
+      <ellipse cx="180" cy={y} rx="220" ry="16" />
+      <ellipse cx="560" cy={y + 14} rx="260" ry="18" />
+    </g>
+  );
+}
+
+function Petals({ color = ROSE, count = 9 }: { color?: string; count?: number }) {
+  return (
+    <g fill={color}>
+      {Array.from({ length: count }, (_, i) => (
+        <ellipse key={i} className="m-petal" cx={(i * 97 + 40) % 800} cy={0} rx="5" ry="3" style={t(9 + (i % 4) * 2, (i * 1.7) % 10, { '--sx': `${(i % 2 ? 1 : -1) * (30 + (i % 3) * 18)}px` })} />
+      ))}
+    </g>
+  );
+}
+
+function Steam({ x, y, count = 3, stroke = '#fff', opacity = 0.7 }: { x: number; y: number; count?: number; stroke?: string; opacity?: number }) {
+  return (
+    <>
+      {Array.from({ length: count }, (_, i) => (
+        <path key={i} className="m-steam big" style={t(3.6, i * 1.2)} d={`M${x + (i - (count - 1) / 2) * 16} ${y} q-9 -16 0 -30 q9 -16 0 -30`} fill="none" stroke={stroke} strokeWidth="4" strokeLinecap="round" opacity={opacity} />
+      ))}
+    </>
+  );
 }
 
 const SCENES: Record<string, ReactNode> = {
@@ -82,6 +117,8 @@ const SCENES: Record<string, ReactNode> = {
       <rect x="0" y="118" width="800" height="24" fill={CLAY} />
       <circle cx="400" cy="500" r="56" fill="#fff" opacity=".35" />
       <circle cx="400" cy="500" r="36" fill={WATER} />
+      {[0, 1, 2].map((i) => <ellipse key={i} className="m-ring" style={t(3.6, i * 1.2)} cx="400" cy="500" rx="30" ry="30" fill="none" stroke="#fff" strokeWidth="3" opacity=".7" />)}
+      <Petals />
       <path d="M650 440 c-16 -50 10 -70 26 -96 c10 30 28 50 10 96z" fill={SAGE} />
       <rect x="648" y="438" width="42" height="34" fill={CLAY} />
     </>
@@ -90,6 +127,7 @@ const SCENES: Record<string, ReactNode> = {
     <>
       <rect width="800" height="600" fill="#dfe6cd" />
       <Hills />
+      <Mist y={338} />
       <Deodar x={150} y={420} s={1.5} fill={PINE} />
       <Deodar x={330} y={450} s={1.1} fill={INK} />
       <Deodar x={640} y={410} s={1.7} fill={PINE} />
@@ -106,12 +144,16 @@ const SCENES: Record<string, ReactNode> = {
   lake: (
     <>
       <rect width="800" height="600" fill="#f2d7b2" />
+      <circle className="m-glow" style={t(7)} cx="240" cy="150" r="82" fill="url(#glow-cream)" opacity=".95" />
       <circle cx="240" cy="150" r="56" fill="#fbecd1" />
       <Hills dusk />
+      <Mist y={332} opacity={0.3} duration={30} />
       <rect y="360" width="800" height="240" fill={WATER} />
-      <path d="M100 410h220M420 390h200M180 460h340M560 480h170M40 520h220M380 540h300" stroke="#a6c4c1" strokeWidth="3" strokeLinecap="round" opacity=".75" />
-      <path d="M470 440 h120 l-16 22 h-88z" fill={CLAY} />
-      <path d="M528 440 V378 l42 56z" fill={CREAM} />
+      <path className="m-ripple" d="M100 410h220M420 390h200M180 460h340M560 480h170M40 520h220M380 540h300" stroke="#a6c4c1" strokeWidth="3" strokeLinecap="round" opacity=".75" />
+      <g className="m-bob" style={t(4)}>
+        <path d="M470 440 h120 l-16 22 h-88z" fill={CLAY} />
+        <path d="M528 440 V378 l42 56z" fill={CREAM} />
+      </g>
       <path d="M0 600 V500 h170 v100z" fill={INK} />
       <rect x="0" y="470" width="190" height="10" fill={BRASS} />
       <path d="M20 470v30M60 470v30M100 470v30M140 470v30M180 470v30" stroke={BRASS} strokeWidth="5" />
@@ -140,6 +182,7 @@ const SCENES: Record<string, ReactNode> = {
   residence: (
     <>
       <rect width="800" height="600" fill="#b6532f" />
+      <circle className="m-glow" style={t(7)} cx="600" cy="170" r="120" fill="url(#glow-warm)" opacity=".95" />
       <circle cx="600" cy="170" r="84" fill="#f6c889" />
       <path d="M0 340 C160 260 280 300 420 250 S680 230 800 300 V600 H0Z" fill="#6e4034" />
       <rect y="370" width="800" height="230" fill="#7a5e5e" />
@@ -161,6 +204,7 @@ const SCENES: Record<string, ReactNode> = {
       {[155, 400, 645].map((x) => (
         <g key={x}>
           <path d={`M${x} 0v210`} stroke={INK} strokeWidth="3" />
+          <circle className="m-glow" style={t(3.4, x / 120)} cx={x} cy={256} r="70" fill="url(#glow-warm)" opacity=".95" />
           <path d={`M${x - 34} 250 a34 40 0 0 1 68 0z`} fill={CREAM} />
           <circle cx={x} cy={252} r="9" fill="#fff4cf" />
         </g>
@@ -172,6 +216,7 @@ const SCENES: Record<string, ReactNode> = {
           <path d={`M${x - 80} 440 q80 42 160 0 v30 h-160z`} fill={CREAM} />
           <circle cx={x - 28} cy={430} r="9" fill={CLAY} />
           <circle cx={x + 28} cy={430} r="9" fill={BRASS} />
+          <Steam x={x} y={414} count={2} opacity={0.55} />
         </g>
       ))}
     </>
@@ -183,7 +228,10 @@ const SCENES: Record<string, ReactNode> = {
       <circle cx="400" cy="210" r="88" fill={ROSE} opacity=".8" />
       <rect y="400" width="800" height="200" fill={WATER} />
       <path d="M140 440h170M480 445h190M260 490h290M90 545h180M520 540h210" stroke="#b7d0cc" strokeWidth="3" strokeLinecap="round" />
-      <g fill={CREAM}>
+      {[0, 1, 2].map((i) => <ellipse key={i} className="m-ring" style={t(4.2, i * 1.4)} cx="400" cy="404" rx="60" ry="14" fill="none" stroke="#b7d0cc" strokeWidth="3" opacity=".8" />)}
+      <Steam x={180} y={400} count={2} opacity={0.5} />
+      <Steam x={620} y={404} count={2} opacity={0.5} />
+      <g fill={CREAM} className="m-bob" style={t(5)}>
         <ellipse cx="400" cy="402" rx="60" ry="12" />
         <path d="M400 395 c-26 -18 -28 -44 0 -62 c28 18 26 44 0 62z" fill={ROSE} />
         <path d="M400 396 c-44 -6 -58 -28 -56 -44 c28 2 48 16 56 44z" fill="#e7b39a" />
@@ -197,13 +245,14 @@ const SCENES: Record<string, ReactNode> = {
     <>
       <rect width="800" height="600" fill="#20354f" />
       <g fill="#f6e8c5">
-        {[[80, 80], [210, 50], [340, 110], [510, 60], [640, 120], [740, 50], [150, 160], [430, 170], [700, 190]].map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r="2.5" />)}
+        {[[80, 80], [210, 50], [340, 110], [510, 60], [640, 120], [740, 50], [150, 160], [430, 170], [700, 190]].map(([x, y], i) => <circle key={`${x}${y}`} className="m-twinkle" style={t(2.4 + (i % 4) * 0.7, i * 0.6)} cx={x} cy={y} r="2.5" />)}
       </g>
+      <circle className="m-glow" style={t(8)} cx="630" cy="100" r="62" fill="url(#glow-cream)" opacity=".95" />
       <circle cx="630" cy="100" r="34" fill="#f6e8c5" />
       <path d="M0 310 C180 240 300 290 460 240 S700 260 800 310 V600 H0Z" fill="#132233" />
       <rect y="360" width="800" height="240" fill="#1a2d44" />
       <path d="M0 150 q200 80 400 30 t400 20" fill="none" stroke={INK} strokeWidth="3" />
-      {[70, 170, 280, 390, 500, 610, 720].map((x, i) => <circle key={x} cx={x} cy={186 + (i % 2) * 12} r="8" fill="#ffd98a" />)}
+      {[70, 170, 280, 390, 500, 610, 720].map((x, i) => <circle key={x} cx={x} cy={186 + (i % 2) * 12} r="8" fill="#ffd98a" className="m-twinkle" style={t(1.8 + (i % 3) * 0.6, i * 0.4)} />)}
       <rect y="470" width="800" height="130" fill="#7c5234" />
       <rect x="110" y="400" width="200" height="10" fill={CREAM} />
       <rect x="205" y="410" width="10" height="90" fill={CREAM} />
@@ -224,7 +273,10 @@ const SCENES: Record<string, ReactNode> = {
           })}
         </g>
       ))}
+      <circle className="m-glow" style={t(3)} cx="640" cy="330" r="150" fill="url(#glow-warm)" opacity=".95" />
       <rect y="480" width="800" height="120" fill="#7c5234" />
+      <path d="M610 480 v-90 M580 392 h120 l-20 -50 h-80z" stroke="#c9994a" strokeWidth="6" fill="#f6dfa8" />
+      {[[120, 300, 0], [330, 260, 2], [520, 330, 4], [700, 270, 1], [220, 420, 3], [440, 440, 5]].map(([x, y, d]) => <circle key={`${x}${y}`} className="m-mote" cx={x} cy={y} r="3" fill="#ffe7a8" style={t(8, d)} />)}
       <path d="M270 480 v-100 a60 60 0 0 1 120 0 v100z" fill={CLAY} />
       <rect x="290" y="420" width="240" height="60" rx="10" fill={CLAY} />
     </>
@@ -239,8 +291,11 @@ const SCENES: Record<string, ReactNode> = {
       <path d="M280 370 C340 330 450 330 520 380 V470 H280Z" fill={WATER} />
       <rect x="120" y="150" width="60" height="320" fill={SAND} />
       <rect x="620" y="150" width="60" height="320" fill={SAND} />
-      <path d="M400 0v60" stroke={BRASS} strokeWidth="4" />
-      <circle cx="400" cy="66" r="14" fill={BRASS} />
+      <g className="m-swing" style={t(5)}>
+        <path d="M400 0v60" stroke={BRASS} strokeWidth="4" />
+        <circle cx="400" cy="66" r="14" fill={BRASS} />
+        <circle className="m-glow" style={t(2.6)} cx="400" cy="70" r="46" fill="url(#glow-warm)" opacity=".95" />
+      </g>
       <rect x="30" y="420" width="62" height="50" fill={CLAY} />
       <path d="M30 420 c-10 -70 20 -90 31 -120 c12 30 40 50 31 120z" fill={SAGE} />
       <rect x="708" y="420" width="62" height="50" fill={CLAY} />

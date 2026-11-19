@@ -4,10 +4,8 @@
  * loads behind it, and the poster stays in place wherever 3D is not appropriate.
  */
 import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useAuth } from '@/app/providers';
 import { BrandMark, Icon } from '@/components/icons';
 import { detectHeroTier, reducedMotionQuery, type HeroTier } from './capabilities';
 import { createRig } from './rig';
@@ -21,7 +19,6 @@ const POSTER_URL = `${import.meta.env.BASE_URL}images/hotel-hero.webp`;
 const STORY_CHAPTERS = 8;
 
 function FloatingNav({ condensed }: { condensed: boolean }) {
-  const { user } = useAuth();
   return (
     <nav className={`h3d-nav${condensed ? ' is-condensed' : ''}`} aria-label="Site">
       <a href="#top" className="h3d-brand" aria-label="Folio, back to top">
@@ -35,17 +32,12 @@ function FloatingNav({ condensed }: { condensed: boolean }) {
         <a href="#gallery">Gallery</a>
         <a href="#visit">Visit</a>
       </div>
-      {user ? (
-        <Link to="/app/dashboard" className="h3d-nav-cta">Back to the suite</Link>
-      ) : (
-        <Link to="/login" className="h3d-nav-cta">Demo login</Link>
-      )}
+      <a href="#rooms" className="h3d-nav-cta">Book a stay</a>
     </nav>
   );
 }
 
 export function HotelHero() {
-  const { user } = useAuth();
   const heroRef = useRef<HTMLElement>(null);
   const rig = useMemo(createRig, []);
   const [tier, setTier] = useState<HeroTier>(detectHeroTier);
@@ -175,7 +167,7 @@ export function HotelHero() {
             <div className="h3d-foot-copy h3d-foot-item">
               <p className="h3d-sub">One intelligent platform to manage every stay, every room and every guest experience.</p>
               <p className="h3d-disclosure">
-                A product demonstration with a fictional hotel. <a href="#demo">See the sample logins</a>
+                A lakeside courtyard hotel in the hills of Nairavale.
               </p>
             </div>
             <div className="h3d-foot-end h3d-foot-item">
@@ -188,15 +180,9 @@ export function HotelHero() {
               </div>
               <div className="h3d-actions">
                 <a href="#about" className="h3d-btn">Explore the Platform</a>
-                {user ? (
-                  <Link to="/app/dashboard" className="h3d-btn h3d-btn-primary">
-                    Launch Live Demo <Icon name="arrow" size={17} />
-                  </Link>
-                ) : (
-                  <a href="#demo" className="h3d-btn h3d-btn-primary">
-                    Launch Live Demo <Icon name="arrow" size={17} />
-                  </a>
-                )}
+                <a href="#rooms" className="h3d-btn h3d-btn-primary">
+                  Book a stay <Icon name="arrow" size={17} />
+                </a>
               </div>
             </div>
           </div>

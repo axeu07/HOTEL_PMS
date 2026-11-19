@@ -1,4 +1,5 @@
-import type { ISODate } from '@/types/domain';
+/** Dates are ISO `YYYY-MM-DD` strings. */
+type ISODate = string;
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -24,15 +25,4 @@ export function addDays(iso: ISODate, days: number): ISODate {
 
 export function nightsBetween(from: ISODate, to: ISODate): number {
   return Math.round((parseDate(to).getTime() - parseDate(from).getTime()) / 86_400_000);
-}
-
-export function rangeDays(from: ISODate, to: ISODate): ISODate[] {
-  const out: ISODate[] = [];
-  for (let d = from; d <= to; d = addDays(d, 1)) out.push(d);
-  return out;
-}
-
-/** Half-open overlap: a stay ending the day another begins does not clash. */
-export function staysOverlap(aIn: ISODate, aOut: ISODate, bIn: ISODate, bOut: ISODate): boolean {
-  return aIn < bOut && bIn < aOut;
 }
